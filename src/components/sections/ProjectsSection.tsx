@@ -1,5 +1,12 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { type KeyboardEvent, useEffect, useState } from 'react'
+import {
+  type KeyboardEvent,
+  type TransitionEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import TopoBackground from '@/components/kokonutui/topo-background'
 import {
   CodeRevealItem,
@@ -40,29 +47,95 @@ export function ProjectsSection() {
   const [visibleCount, setVisibleCount] = useState<number>(() =>
     typeof window === 'undefined' ? 3 : getVisibleCount(window.innerWidth)
   )
-  const [activeIndex, setActiveIndex] = useState(0)
+  const carouselRef = useRef<HTMLDivElement>(null)
+  const [hasEnteredView, setHasEnteredView] = useState(false)
+  const [navigationCount, setNavigationCount] = useState(0)
+  const [trackPos, setTrackPos] = useState(projects.length)
+  const [isTransitioning, setIsTransitioning] = useState(true)
+
+  const loopedProjects = useMemo(
+    () => [...projects, ...projects, ...projects],
+    []
+  )
+
+  useEffect(() => {
+    const node = carouselRef.current
+    if (!node) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setHasEnteredView(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.2 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const onResize = () => {
-      const nextCount = getVisibleCount(window.innerWidth)
-      setVisibleCount(nextCount)
-      const nextMax = Math.max(0, projects.length - nextCount)
-      setActiveIndex((prev) => Math.min(prev, nextMax))
+      setVisibleCount(getVisibleCount(window.innerWidth))
     }
 
     window.addEventListener('resize', onResize, { passive: true })
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const maxIndex = Math.max(0, projects.length - visibleCount)
-  const safeIndex = Math.min(activeIndex, maxIndex)
+  const totalProjects = projects.length
+  const activeProjectIndex =
+    ((trackPos % totalProjects) + totalProjects) % totalProjects
+  const leadingSlot = visibleCount === 3 ? trackPos - 1 : trackPos
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev <= 0 ? maxIndex : prev - 1))
+    setNavigationCount((count) => count + 1)
+    setIsTransitioning(true)
+    setTrackPos((prev) =>
+      prev <= 1 ? totalProjects + activeProjectIndex - 1 : prev - 1
+    )
   }
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
+    setNavigationCount((count) => count + 1)
+    setIsTransitioning(true)
+    setTrackPos((prev) =>
+      prev >= totalProjects * 3 - 2
+        ? totalProjects + activeProjectIndex + 1
+        : prev + 1
+    )
+  }
+
+  const handleSelectDot = (targetIdx: number) => {
+    let delta = targetIdx - activeProjectIndex
+    if (delta > totalProjects / 2) {
+      delta -= totalProjects
+    } else if (delta < -totalProjects / 2) {
+      delta += totalProjects
+    }
+    if (delta === 0) {
+      return
+    }
+    setNavigationCount((count) => count + 1)
+    setIsTransitioning(true)
+    setTrackPos((prev) => prev + delta)
+  }
+
+  const handleTrackTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
+    if (
+      event.target !== event.currentTarget ||
+      event.propertyName !== 'transform'
+    ) {
+      return
+    }
+    if (trackPos < totalProjects || trackPos >= totalProjects * 2) {
+      setIsTransitioning(false)
+      setTrackPos(totalProjects + activeProjectIndex)
+    }
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -75,11 +148,8 @@ export function ProjectsSection() {
     }
   }
 
-  const rangeStart = String(safeIndex + 1).padStart(2, '0')
-  const rangeEnd = String(
-    Math.min(projects.length, safeIndex + visibleCount)
-  ).padStart(2, '0')
-  const totalCount = String(projects.length).padStart(2, '0')
+  const activeNum = String(activeProjectIndex + 1).padStart(2, '0')
+  const totalCount = String(totalProjects).padStart(2, '0')
 
   return (
     <section
@@ -89,6 +159,7 @@ export function ProjectsSection() {
     >
       <RevealSection
         label="ProjectsSection"
+        revealAllOnEnter
         toggleOffsetClassName="top-6 right-4 sm:right-6"
       >
         <TopoBackground
@@ -127,8 +198,8 @@ export function ProjectsSection() {
                 className="mb-10 self-start sm:mb-12 sm:self-end"
               >
                 <div className="flex flex-wrap items-center gap-3">
-                  <span className="font-mono text-xs text-[var(--fg-muted)]">
-                    {rangeStart}&ndash;{rangeEnd} / {totalCount}
+                  <span className="font-mono text-xs text-[var(--fg-muted)] tabular-nums">
+                    {activeNum} / {totalCount}
                   </span>
 
                   <div className="inline-flex items-center gap-2">
@@ -157,29 +228,35 @@ export function ProjectsSection() {
 
             {/* Sliding Showcase Viewport */}
             <div
+              ref={carouselRef}
               role="region"
               aria-roledescription="carousel"
               aria-label="Selected projects showcase"
-              className="overflow-hidden py-2"
+              className="overflow-hidden py-8"
             >
               <div
+                onTransitionEnd={handleTrackTransitionEnd}
                 className={cn(
                   'flex gap-6 will-change-transform',
                   !prefersReducedMotion &&
+                    isTransitioning &&
                     'transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]'
                 )}
                 style={{
-                  transform: `translate3d(calc(-${safeIndex} * ((100% + 24px) / ${visibleCount})), 0, 0)`,
+                  transform: `translate3d(calc(-${leadingSlot} * ((100% + 24px) / ${visibleCount})), 0, 0)`,
                 }}
               >
-                {projects.map((project, index) => {
-                  const isFeatured =
-                    visibleCount === 3 && index === safeIndex + 1
+                {loopedProjects.map((project, slotIndex) => {
+                  const slotProjectIndex = slotIndex % totalProjects
+                  const isFeatured = slotProjectIndex === activeProjectIndex
 
                   return (
                     <div
-                      key={project.id}
-                      className="shrink-0"
+                      key={`${project.id}-${slotIndex}`}
+                      className={cn(
+                        'relative shrink-0',
+                        isFeatured ? 'z-20' : 'z-10'
+                      )}
                       style={{
                         width: `calc((100% - ${(visibleCount - 1) * 24}px) / ${visibleCount})`,
                       }}
@@ -191,7 +268,16 @@ export function ProjectsSection() {
                         <ProjectCard
                           project={project}
                           onInspect={setSelectedProject}
+                          onSelectCard={
+                            isFeatured
+                              ? undefined
+                              : slotIndex < trackPos
+                                ? handlePrev
+                                : handleNext
+                          }
                           isFeaturedSlot={isFeatured}
+                          shouldCompile={isFeatured && hasEnteredView}
+                          compileDelayMs={navigationCount === 0 ? 1150 : 250}
                         />
                       </CodeRevealItem>
                     </div>
@@ -201,26 +287,26 @@ export function ProjectsSection() {
             </div>
 
             {/* Slot Progress Indicators */}
-            <div className="mt-6 flex justify-center">
+            <div className="mt-4 flex justify-center">
               <CodeRevealItem
-                code={projectsSnippets.progressDots(maxIndex + 1)}
+                code={projectsSnippets.progressDots(totalProjects)}
                 inline
               >
                 <div
-                  className="flex min-h-6 min-w-[120px] items-center justify-center gap-2 px-1"
+                  className="flex min-h-6 min-w-[140px] items-center justify-center gap-2 px-1"
                   role="tablist"
-                  aria-label="Select project showcase position"
+                  aria-label="Select featured project"
                 >
-                  {Array.from({ length: maxIndex + 1 }, (_, slotIdx) => {
-                    const isActive = slotIdx === safeIndex
+                  {projects.map((project, slotIdx) => {
+                    const isActive = slotIdx === activeProjectIndex
                     return (
                       <button
-                        key={slotIdx}
+                        key={project.id}
                         type="button"
                         role="tab"
                         aria-selected={isActive}
-                        aria-label={`Show projects starting at item ${slotIdx + 1}`}
-                        onClick={() => setActiveIndex(slotIdx)}
+                        aria-label={`Center project ${project.title}`}
+                        onClick={() => handleSelectDot(slotIdx)}
                         className={cn(
                           'h-1.5 rounded-full transition-all duration-300',
                           isActive

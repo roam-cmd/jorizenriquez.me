@@ -67,9 +67,11 @@ export interface ProjectItem {
   demoUrl?: string
   linkNote?: string
   previewVariant: 'editor' | 'topology' | 'grid'
+  previewFile: string
+  previewCode: string
 }
 
-export type TimelineCategory = 'Experience' | 'Education'
+export type TimelineCategory = 'Education' | 'Achievements'
 
 export interface ExperienceItem {
   id: string
@@ -77,7 +79,7 @@ export interface ExperienceItem {
   period: string
   title: string
   organization: string
-  location: string
+  location?: string
   summary: string
   highlights: string[]
 }
@@ -292,6 +294,12 @@ export const projects: ProjectItem[] = [
       'Deployed live at blockbased-hrms.beulahlabs.com with ongoing full-stack development.',
     demoUrl: 'https://blockbased-hrms.beulahlabs.com/',
     previewVariant: 'topology',
+    previewFile: 'AuditFlow.tsx',
+    previewCode: `// Immutable verification flow
+<ReactFlow nodes={nodes}>
+  <AuditNode id="sha256" ok />
+  <FailoverEdge to="cloud-dr" />
+</ReactFlow>`,
   },
   {
     id: 'assay-coin',
@@ -318,6 +326,11 @@ export const projects: ProjectItem[] = [
       'Currently in active development; public repository or live URL will be linked once available.',
     linkNote: 'Link coming soon',
     previewVariant: 'grid',
+    previewFile: 'board_sim.py',
+    previewCode: `# Procedural 9x9 city board
+def build_city(seed: int, role: str):
+  grid = gen_grid(9, 9, seed)
+  return apply_persona(grid, role)`,
   },
   {
     id: 'trimclick',
@@ -337,6 +350,12 @@ export const projects: ProjectItem[] = [
       'Completed in March 2025 with source code available on GitHub.',
     repoUrl: 'https://github.com/roam-cmd/Barber-Website-V2',
     previewVariant: 'editor',
+    previewFile: 'booking.html',
+    previewCode: `<!-- Appointment slot picker -->
+<section class="booking-card">
+  <span class="vip">Loyalty -15%</span>
+  <button slot="10:30">10:30</button>
+</section>`,
   },
   {
     id: 'diabetes-analytics',
@@ -356,6 +375,11 @@ export const projects: ProjectItem[] = [
       'Delivered a cleaned 100k-row dataset, relational data model diagram, and Power BI dashboard.',
     repoUrl: 'https://github.com/roam-cmd/Analytics-Project',
     previewVariant: 'grid',
+    previewFile: 'measures.dax',
+    previewCode: `-- Star-schema clinical prevalence
+VAR Total = COUNTROWS(FactClinical)
+VAR Cases = CALCULATE(Total, Dx = 1)
+RETURN DIVIDE(Cases, Total, 0)`,
   },
   {
     id: 'chronolist',
@@ -375,6 +399,12 @@ export const projects: ProjectItem[] = [
       'Completed in December 2024 with full Python source hosted on GitHub.',
     repoUrl: 'https://github.com/roam-cmd/Chronolist_TK',
     previewVariant: 'editor',
+    previewFile: 'app.py',
+    previewCode: `# Tkinter workspace layout
+class Chronolist(tk.Tk):
+  def __init__(self):
+    self.tasks = TaskPane(self)
+    self.diary = DiaryView(self)`,
   },
   {
     id: 'word-companion',
@@ -394,35 +424,49 @@ export const projects: ProjectItem[] = [
       'Completed in December 2024 with source code available on GitHub.',
     repoUrl: 'https://github.com/roam-cmd/Word_Companion_App',
     previewVariant: 'topology',
+    previewFile: 'VocabAdapter.java',
+    previewCode: `// Bind scrollable vocabulary card
+void bindCard(Holder vh, int i) {
+  WordEntry item = words.get(i);
+  vh.term.setText(item.getWord());
+  vh.hint.setText(item.getMeaning());
+}`,
   },
 ]
 
 export const experienceItems: ExperienceItem[] = [
   {
-    id: 'exp-placeholder-1',
-    category: 'Experience',
-    period: '[YYYY — Present / Placeholder]',
-    title: '[Role Title — Placeholder]',
-    organization: '[Organization or Team Name]',
-    location: 'City of San Fernando, Pampanga',
+    id: 'cca-bscs',
+    category: 'Education',
+    period: 'Expected June 2027',
+    title: 'Bachelor of Science in Computer Science',
+    organization: 'City College of Angeles',
+    location: 'Angeles City, Pampanga',
     summary:
-      'Placeholder entry: Replace with your verified work, internship, or freelance experience when ready.',
+      'Undergraduate Computer Science student with consistent academic distinction (Dean’s List 2023 – 2026).',
     highlights: [
-      'Placeholder responsibility: Add concrete engineering tasks, APIs, or UI features you owned.',
+      'Dean’s List 2023 – 2026',
+      'Relevant Coursework: Algorithms, Web Development, Object-Oriented Programming, Networking, Android Development, Data Analytics',
     ],
   },
   {
-    id: 'edu-placeholder-1',
-    category: 'Education',
-    period: '[YYYY — YYYY / Placeholder]',
-    title: '[Degree or Program — Placeholder]',
-    organization: '[University or Institution Name]',
-    location: '[City / Region — Placeholder]',
+    id: 'cloudstaff-ai-hackathon-2026',
+    category: 'Achievements',
+    period: '2026',
+    title: 'Participant, AI Hackathon',
+    organization: 'Cloudstaff',
+    summary: 'Competed as a participant in the Cloudstaff AI Hackathon.',
+    highlights: [],
+  },
+  {
+    id: 'codejam-sfd-cca-2024',
+    category: 'Achievements',
+    period: '2024',
+    title: '1st Place, CodeJam',
+    organization: 'Software Freedom Day at CCA',
     summary:
-      'Placeholder entry: Replace with your degree program, institution, and relevant coursework.',
-    highlights: [
-      'Relevant Coursework: [Add verified coursework or academic focus — Placeholder]',
-    ],
+      'Earned 1st Place in CodeJam during Software Freedom Day at City College of Angeles.',
+    highlights: [],
   },
 ]
 

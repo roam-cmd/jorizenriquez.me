@@ -29,10 +29,22 @@ const KEYWORDS = new Set([
   'null',
   'undefined',
   'as',
+  'def',
+  'class',
+  'for',
+  'in',
+  'self',
+  'VAR',
+  'RETURN',
+  'CALCULATE',
+  'COUNTROWS',
+  'DIVIDE',
+  'public',
+  'void',
 ])
 
 const TOKEN_PATTERN =
-  /(\/\/.*$|\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|<\/?[A-Za-z][A-Za-z0-9.]*|\b\d+(?:\.\d+)?\b|\b[A-Z][A-Za-z0-9_]*\b|\b[a-z_][A-Za-z0-9_]*(?==)|\b[A-Za-z_][A-Za-z0-9_]*\b|[{}()[\].,:;=<>/&|?!+-]+|\s+)/g
+  /(\/\/.*$|\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|#.*$|--\s.*$|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|<\/?[A-Za-z][A-Za-z0-9.-]*|\b\d+(?:\.\d+)?\b|\b[A-Z][A-Za-z0-9_]*\b|\b[a-z_][A-Za-z0-9_-]*(?==)|\b[A-Za-z_][A-Za-z0-9_]*\b|[{}()[\].,:;=<>/&|?!+-]+|\s+)/g
 
 /**
  * Tokenizes TSX / TypeScript / Tailwind source lines into themed syntax tokens
@@ -61,7 +73,13 @@ export function tokenizeCodeLines(source: string): CodeToken[][] {
 }
 
 function classifyToken(value: string): TokenType {
-  if (value.startsWith('//') || value.startsWith('/*')) {
+  if (
+    value.startsWith('//') ||
+    value.startsWith('/*') ||
+    value.startsWith('<!--') ||
+    value.startsWith('#') ||
+    value.startsWith('--')
+  ) {
     return 'comment'
   }
   if (

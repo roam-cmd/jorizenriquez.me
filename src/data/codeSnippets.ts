@@ -60,7 +60,7 @@ export function buildProjectCardCode(project: ProjectItem): string {
   return `<ProjectCard\n  origin="${project.origin}"\n  title="${project.title}"\n  stack={[${stack}]}\n  onInspect={openDetails}\n/>`
 }
 
-export const experienceFilterCode = `<FilterGroup options={["All", "Experience", "Education"]} />`
+export const experienceFilterCode = `<FilterGroup options={["All", "Education", "Achievements"]} />`
 
 export function buildExperienceCardCode(entry: ExperienceItem): string {
   return `<TimelineEntry\n  category="${entry.category}"\n  period="${entry.period}"\n  title="${entry.title}"\n  org="${entry.organization}"\n/>`

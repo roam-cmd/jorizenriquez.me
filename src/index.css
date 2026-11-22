@@ -74,6 +74,18 @@
     --accent-fg: #0B0E0E;
     --accent-soft: #395B64;
     --accent-tint: rgba(165, 201, 202, 0.12);
+    --accent-rgb: 165, 201, 202;
+
+    --preview-accent: #A5C9CA;
+    --preview-accent-rgb: 165, 201, 202;
+    --preview-bg: #090D10;
+    --preview-window: #0E1519;
+    --preview-surface: #121D22;
+    --preview-chrome: #0A1014;
+    --preview-fg: #E7F6F2;
+    --preview-muted: #94B5B6;
+    --preview-subtle: #69888E;
+    --preview-accent-fg: #091114;
 
     --line-border: rgba(57, 91, 100, 0.45);
     --line-subtle: rgba(57, 91, 100, 0.30);
@@ -148,6 +160,18 @@
     --accent-fg: #222831;
     --accent-soft: #948979;
     --accent-tint: rgba(223, 208, 184, 0.12);
+    --accent-rgb: 223, 208, 184;
+
+    --preview-accent: #DFD0B8;
+    --preview-accent-rgb: 223, 208, 184;
+    --preview-bg: #181D24;
+    --preview-window: #1F252E;
+    --preview-surface: #272E38;
+    --preview-chrome: #1A1F27;
+    --preview-fg: #F5EFE6;
+    --preview-muted: #C6BAA6;
+    --preview-subtle: #948979;
+    --preview-accent-fg: #1F252E;
 
     --line-border: rgba(148, 137, 121, 0.42);
     --line-subtle: rgba(148, 137, 121, 0.25);
@@ -212,6 +236,18 @@
     --accent-fg: #F7F7F4;
     --accent-soft: #777C6D;
     --accent-tint: rgba(119, 124, 109, 0.14);
+    --accent-rgb: 92, 98, 82;
+
+    --preview-accent: #C5CEB4;
+    --preview-accent-rgb: 197, 206, 180;
+    --preview-bg: #1B1E18;
+    --preview-window: #22261F;
+    --preview-surface: #2B3027;
+    --preview-chrome: #1C2019;
+    --preview-fg: #F0F2EC;
+    --preview-muted: #B7BFA9;
+    --preview-subtle: #8C947F;
+    --preview-accent-fg: #1B1E18;
 
     --line-border: rgba(119, 124, 109, 0.36);
     --line-subtle: rgba(203, 203, 203, 0.90);
@@ -341,6 +377,69 @@ html.has-custom-cursor * {
   will-change: transform;
 }
 
+@keyframes scanline-code-wipe {
+  0% {
+    clip-path: inset(0% 0 0 0);
+  }
+  100% {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+@keyframes scanline-ui-reveal {
+  0% {
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0% 0);
+  }
+}
+
+@keyframes scanline-beam {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes preview-glow-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-scanline-code-wipe {
+  animation: scanline-code-wipe 550ms cubic-bezier(0.22, 1, 0.36, 1)
+    var(--scanline-delay, 250ms) both;
+}
+
+.animate-scanline-ui-reveal {
+  animation: scanline-ui-reveal 550ms cubic-bezier(0.22, 1, 0.36, 1)
+    var(--scanline-delay, 250ms) both;
+}
+
+.animate-scanline-beam {
+  animation: scanline-beam 550ms cubic-bezier(0.22, 1, 0.36, 1)
+    var(--scanline-delay, 250ms) both;
+}
+
+.animate-preview-glow {
+  animation: preview-glow-in 450ms ease-out var(--glow-delay, 780ms) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -352,7 +451,11 @@ html.has-custom-cursor * {
 
   .animate-cursor-ripple,
   .animate-cursor-orbit,
-  .animate-hero-chomp-shake {
+  .animate-hero-chomp-shake,
+  .animate-scanline-code-wipe,
+  .animate-scanline-ui-reveal,
+  .animate-scanline-beam,
+  .animate-preview-glow {
     animation: none;
   }
 }

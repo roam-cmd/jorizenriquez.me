@@ -1,79 +1,60 @@
 import { ArrowUpRight, FolderGit2, Layers } from 'lucide-react'
+import { ProjectMiniPreview } from '@/components/ui/ProjectMiniPreview'
 import type { ProjectItem } from '@/data/portfolio'
+import { cn } from '@/lib/utils'
 
 interface ProjectCardProps {
   project: ProjectItem
   onInspect: (project: ProjectItem) => void
+  onSelectCard?: () => void
   isFeaturedSlot?: boolean
+  shouldCompile?: boolean
+  compileDelayMs?: number
 }
 
 /**
- * Reusable project showcase card with architectural preview, honest origin
- * and period labels, technology tags, and conditional live/repo actions.
+ * Reusable project showcase card with bespoke miniature dark-mode UI previews,
+ * scanline code-to-interface reveal on the center spotlight, and card actions.
  */
 export function ProjectCard({
   project,
   onInspect,
+  onSelectCard,
   isFeaturedSlot = false,
+  shouldCompile = isFeaturedSlot,
+  compileDelayMs = 250,
 }: ProjectCardProps) {
   const isExternalDemo = Boolean(project.demoUrl?.startsWith('http'))
+  const isSideClickable = !isFeaturedSlot && Boolean(onSelectCard)
 
   return (
     <article
-      className={`group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] backdrop-blur-[2px] transition-all duration-300 hover:border-[var(--accent)] ${
+      onClick={
+        isSideClickable
+          ? (event) => {
+              if ((event.target as HTMLElement).closest('a, button')) {
+                return
+              }
+              onSelectCard?.()
+            }
+          : undefined
+      }
+      className={cn(
+        'group relative flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-surface-translucent)] backdrop-blur-[2px] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+        isSideClickable && 'cursor-pointer',
         isFeaturedSlot
-          ? 'border-t-2 border-t-[var(--accent)] lg:-translate-y-1'
-          : ''
-      }`}
+          ? 'z-20 -translate-y-2 border-[rgba(var(--accent-rgb),0.65)] border-t-2 border-t-[var(--accent)] opacity-100 ring-1 ring-[rgba(var(--accent-rgb),0.32)] shadow-[0_0_0_1px_rgba(var(--accent-rgb),0.28),0_24px_54px_-14px_rgba(var(--accent-rgb),0.34),0_0_34px_-8px_rgba(var(--accent-rgb),0.22)] lg:-translate-y-4 lg:scale-[1.03]'
+          : 'z-10 translate-y-3 scale-[0.93] border-[var(--line-subtle)] opacity-40 brightness-[0.82] hover:border-[var(--accent)] hover:opacity-65 hover:brightness-95'
+      )}
     >
-      {/* Stylized 16:9 wireframe preview */}
-      <div
-        aria-hidden="true"
-        className="relative aspect-video w-full overflow-hidden border-b border-[var(--line-subtle)] bg-[var(--bg-base)] p-4"
-      >
-        <div className="flex h-full flex-col justify-between rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)] p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[var(--accent-soft)]" />
-              <span className="h-2 w-2 rounded-full bg-[var(--accent)]/70" />
-            </div>
-            <span className="font-mono text-[10px] text-[var(--fg-muted)]">
-              {project.previewVariant}.tsx
-            </span>
-          </div>
-
-          {project.previewVariant === 'editor' && (
-            <div className="grid grid-cols-3 gap-2">
-              <div className="col-span-1 h-12 rounded bg-[var(--bg-elevated)]" />
-              <div className="col-span-2 space-y-1.5">
-                <div className="h-3 w-4/5 rounded bg-[var(--accent-soft)]/60" />
-                <div className="h-3 w-3/5 rounded bg-[var(--accent)]/25" />
-                <div className="h-3 w-2/3 rounded bg-[var(--bg-elevated)]" />
-              </div>
-            </div>
-          )}
-
-          {project.previewVariant === 'topology' && (
-            <div className="flex items-center justify-between gap-2 px-1">
-              <div className="h-8 w-8 rounded-lg border border-[var(--accent)]/40 bg-[var(--bg-elevated)]" />
-              <div className="h-px flex-1 bg-[var(--accent-soft)]" />
-              <div className="h-10 w-10 rounded-full border border-[var(--accent)]/50 bg-[var(--accent-soft)]/35" />
-              <div className="h-px flex-1 bg-[var(--accent-soft)]" />
-              <div className="h-8 w-8 rounded-lg border border-[var(--accent)]/40 bg-[var(--bg-elevated)]" />
-            </div>
-          )}
-
-          {project.previewVariant === 'grid' && (
-            <div className="grid grid-cols-4 gap-1.5">
-              <div className="col-span-2 h-11 rounded bg-[var(--bg-elevated)]" />
-              <div className="col-span-2 h-11 rounded bg-[var(--accent-soft)]/45" />
-            </div>
-          )}
-        </div>
-      </div>
+      <ProjectMiniPreview
+        project={project}
+        isActive={shouldCompile}
+        compileDelayMs={compileDelayMs}
+      />
 
       {/* Card content */}
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex flex-1 flex-col p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="inline-flex items-center rounded-full border border-[var(--line-border)] bg-[var(--bg-elevated)] px-2.5 py-0.5 font-mono text-[11px] text-[var(--accent)]">
             {project.origin}
@@ -88,11 +69,8 @@ export function ProjectCard({
         <h3 className="mt-3 font-display text-xl font-semibold text-[var(--fg-primary)]">
           {project.title}
         </h3>
-        <p className="mt-1 text-sm font-medium text-[var(--accent)]">
+        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-[var(--fg-muted)]">
           {project.tagline}
-        </p>
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--fg-muted)]">
-          {project.summary}
         </p>
 
         {/* Tech stack */}

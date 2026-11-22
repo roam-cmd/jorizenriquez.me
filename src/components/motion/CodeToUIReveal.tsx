@@ -30,6 +30,7 @@ export interface RevealSectionProps {
   holdMs?: number
   materializeMs?: number
   initialImmediate?: boolean
+  revealAllOnEnter?: boolean
   showToggle?: boolean
   className?: string
   toggleOffsetClassName?: string
@@ -81,6 +82,7 @@ export function RevealSection({
   holdMs = 130,
   materializeMs = 380,
   initialImmediate = false,
+  revealAllOnEnter = false,
   showToggle = true,
   className,
   toggleOffsetClassName = 'top-4 right-4 sm:top-6 sm:right-6',
@@ -341,7 +343,17 @@ export function RevealSection({
         }
 
         if (newlyVisibleIds.length > 0) {
-          enqueueWave(newlyVisibleIds, scrollDirectionRef.current)
+          if (revealAllOnEnter) {
+            const allIdleIds: string[] = []
+            for (const [id, meta] of itemsMetaRef.current.entries()) {
+              if (meta.phase === 'idle') {
+                allIdleIds.push(id)
+              }
+            }
+            enqueueWave(allIdleIds, scrollDirectionRef.current)
+          } else {
+            enqueueWave(newlyVisibleIds, scrollDirectionRef.current)
+          }
         }
       },
       {
@@ -422,6 +434,7 @@ export function RevealSection({
     initialImmediate,
     materializeMs,
     prefersReducedMotion,
+    revealAllOnEnter,
     setCompilingActive,
     stopRaf,
     typingMs,

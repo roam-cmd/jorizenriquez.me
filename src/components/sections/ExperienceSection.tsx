@@ -13,7 +13,11 @@ import {
 import { type TimelineCategory, experienceItems } from '@/data/portfolio'
 import { cn } from '@/lib/utils'
 
-const FILTERS: ('All' | TimelineCategory)[] = ['All', 'Experience', 'Education']
+const FILTERS: ('All' | TimelineCategory)[] = [
+  'All',
+  'Education',
+  'Achievements',
+]
 
 export interface ExperienceSectionProps {
   embedded?: boolean
@@ -49,15 +53,15 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
           <CodeRevealItem
             code={sectionHeaderCode(
               '04',
-              'EXPERIENCE & EDUCATION',
+              'EDUCATION & ACHIEVEMENTS',
               'Background Timeline'
             )}
           >
             <SectionHeader
               index="04"
-              eyebrow="EXPERIENCE & EDUCATION"
+              eyebrow="EDUCATION & ACHIEVEMENTS"
               title="Background Timeline"
-              description="A flexible chronological view supporting both professional experience and academic history."
+              description="Academic background, honors, and competitive programming milestones."
             />
           </CodeRevealItem>
         </div>
@@ -120,7 +124,8 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
                         {entry.title}
                       </h3>
                       <p className="mt-0.5 text-sm font-medium text-[var(--accent)]">
-                        {entry.organization} &middot; {entry.location}
+                        {entry.organization}
+                        {entry.location ? ` · ${entry.location}` : ''}
                       </p>
                       <p className="mt-3 text-sm leading-relaxed text-[var(--fg-muted)]">
                         {entry.summary}
