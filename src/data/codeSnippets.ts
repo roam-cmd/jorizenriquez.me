@@ -18,6 +18,7 @@ export const heroSnippets = {
   intro: `<p className="max-w-2xl text-[var(--fg-muted)]">\n  {siteProfile.headline}\n  {siteProfile.tagline}\n</p>`,
   primaryCta: `<a href="#projects">Explore Projects</a>`,
   secondaryCta: `<a href="#contact">Contact Me</a>`,
+  cvCta: `<a href="/others/CV.pdf" target="_blank">View CV</a>`,
   socialChip: (label: string) => `<SocialLink label="${label}" />`,
 }
 
@@ -80,6 +81,7 @@ export const certificationsBookCode = `<PageFlip\n  groups={["Networking & IT", 
 export const contactSnippets = {
   intro: `<div className="space-y-3">\n  <span>{siteProfile.location}</span>\n  <h3>{siteProfile.availability}</h3>\n</div>`,
   emailBtn: `<a href={\`mailto:\${siteProfile.email}\`}>Email Me</a>`,
+  cvCta: `<a href="/others/CV.pdf" target="_blank">View CV</a>`,
   directEmail: `<DirectEmail\n  addresses={siteProfile.emails}\n  onCopy={copyEmail}\n/>`,
   socialChip: (label: string) => `<SocialLink label="${label}" />`,
 }

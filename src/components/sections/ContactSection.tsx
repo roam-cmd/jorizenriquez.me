@@ -1,4 +1,4 @@
-import { Check, Copy, Mail, MapPin } from 'lucide-react'
+import { Check, Copy, FileText, Mail, MapPin } from 'lucide-react'
 import { useState } from 'react'
 import TopoBackground from '@/components/kokonutui/topo-background'
 import {
@@ -97,6 +97,21 @@ export function ContactSection() {
                     >
                       <Mail className="h-4 w-4" aria-hidden="true" />
                       <span>Email Me</span>
+                    </a>
+                  </CodeRevealItem>
+
+                  <CodeRevealItem code={contactSnippets.cvCta} inline>
+                    <a
+                      href={siteProfile.cvUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-base)]/80 px-4 py-2.5 text-xs font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                    >
+                      <FileText
+                        className="h-3.5 w-3.5 text-[var(--accent)]"
+                        aria-hidden="true"
+                      />
+                      <span>View CV</span>
                     </a>
                   </CodeRevealItem>
 

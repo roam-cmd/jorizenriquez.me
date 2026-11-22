@@ -23,6 +23,7 @@ export interface SiteProfile {
   availability: string
   email: string
   emails: string[]
+  cvUrl: string
   socials: SocialLink[]
 }
 
@@ -114,6 +115,7 @@ export const siteProfile: SiteProfile = {
   availability: 'Open to opportunities & collaborations',
   email: 'aaronenriquez2104@gmail.com',
   emails: ['aaronenriquez2104@gmail.com', 'catsoinabox39@gmail.com'],
+  cvUrl: '/others/CV.pdf',
   socials: [
     {
       label: 'GitHub',

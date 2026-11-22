@@ -1,4 +1,4 @@
-import { ArrowDownRight } from 'lucide-react'
+import { ArrowDownRight, FileText } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   CodeRevealItem,
@@ -177,6 +177,21 @@ export function HeroSection() {
                     className="inline-flex items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-5 py-3 text-sm font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
                   >
                     <span>Contact Me</span>
+                  </a>
+                </CodeRevealItem>
+
+                <CodeRevealItem code={heroSnippets.cvCta} inline>
+                  <a
+                    href={siteProfile.cvUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-5 py-3 text-sm font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  >
+                    <FileText
+                      className="h-4 w-4 text-[var(--accent)]"
+                      aria-hidden="true"
+                    />
+                    <span>View CV</span>
                   </a>
                 </CodeRevealItem>
               </div>
