@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from 'react'
 import {
   type ItemPhase,
@@ -102,9 +103,8 @@ export function RevealSection({
   const [manualInspect, setManualInspect] = useState(false)
   const manualInspectRef = useRef(false)
   const isCompilingRef = useRef(false)
-  const [itemStates, setItemStates] = useState<Record<string, ItemRevealState>>(
-    {}
-  )
+  const snapshotsRef = useRef<Map<string, ItemRevealState>>(new Map())
+  const listenersRef = useRef<Map<string, Set<() => void>>>(new Map())
 
   const setCompilingActive = useCallback((active: boolean) => {
     if (isCompilingRef.current === active) {
@@ -119,11 +119,46 @@ export function RevealSection({
   }, [manualInspect])
 
   const commitStates = useCallback(() => {
-    const snapshot: Record<string, ItemRevealState> = {}
     for (const [id, meta] of itemsMetaRef.current.entries()) {
-      snapshot[id] = { phase: meta.phase, progress: meta.progress }
+      const quantizedProgress = Math.round(meta.progress * 200) / 200
+      const prev = snapshotsRef.current.get(id)
+      if (
+        prev &&
+        prev.phase === meta.phase &&
+        prev.progress === quantizedProgress
+      ) {
+        continue
+      }
+      snapshotsRef.current.set(id, {
+        phase: meta.phase,
+        progress: quantizedProgress,
+      })
+      const itemListeners = listenersRef.current.get(id)
+      if (itemListeners) {
+        for (const listener of itemListeners) {
+          listener()
+        }
+      }
     }
-    setItemStates(snapshot)
+  }, [])
+
+  const subscribeItem = useCallback((id: string, listener: () => void) => {
+    let set = listenersRef.current.get(id)
+    if (!set) {
+      set = new Set()
+      listenersRef.current.set(id, set)
+    }
+    set.add(listener)
+    return () => {
+      const current = listenersRef.current.get(id)
+      if (!current) {
+        return
+      }
+      current.delete(listener)
+      if (current.size === 0) {
+        listenersRef.current.delete(id)
+      }
+    }
   }, [])
 
   const stopRaf = useCallback(() => {
@@ -151,6 +186,7 @@ export function RevealSection({
         itemObserverRef.current?.unobserve(element)
         elementToIdRef.current.delete(element)
         itemsMetaRef.current.delete(id)
+        snapshotsRef.current.delete(id)
         for (const wave of wavesRef.current) {
           wave.itemIds.delete(id)
         }
@@ -445,9 +481,9 @@ export function RevealSection({
       if (prefersReducedMotion) {
         return RENDERED_STATE
       }
-      return itemStates[id] ?? IDLE_STATE
+      return snapshotsRef.current.get(id) ?? IDLE_STATE
     },
-    [itemStates, prefersReducedMotion]
+    [prefersReducedMotion]
   )
 
   const contextValue = useMemo(
@@ -455,9 +491,16 @@ export function RevealSection({
       manualInspect,
       prefersReducedMotion,
       getItemState,
+      subscribeItem,
       registerItem,
     }),
-    [getItemState, manualInspect, prefersReducedMotion, registerItem]
+    [
+      getItemState,
+      manualInspect,
+      prefersReducedMotion,
+      registerItem,
+      subscribeItem,
+    ]
   )
 
   return (
@@ -536,8 +579,13 @@ export function CodeRevealItem({
 }: CodeRevealItemProps) {
   const id = useId()
   const itemRef = useRef<HTMLDivElement>(null)
-  const { manualInspect, prefersReducedMotion, getItemState, registerItem } =
-    useRevealSection()
+  const {
+    manualInspect,
+    prefersReducedMotion,
+    getItemState,
+    subscribeItem,
+    registerItem,
+  } = useRevealSection()
 
   useEffect(() => {
     const node = itemRef.current
@@ -547,7 +595,16 @@ export function CodeRevealItem({
     return registerItem(id, node)
   }, [id, registerItem])
 
-  const { phase, progress } = getItemState(id)
+  const subscribe = useCallback(
+    (listener: () => void) => subscribeItem(id, listener),
+    [id, subscribeItem]
+  )
+  const getSnapshot = useCallback(() => getItemState(id), [getItemState, id])
+  const { phase, progress } = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getSnapshot
+  )
 
   const tokenizedLines = useMemo(() => tokenizeCodeLines(code), [code])
   const totalChars = useMemo(

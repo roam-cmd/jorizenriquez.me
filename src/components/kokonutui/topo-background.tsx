@@ -35,7 +35,7 @@ export interface TopoBackgroundProps {
 
 // Distance between field samples, in CSS px. Contours are traced through
 // this grid, so it trades smoothness for work per frame.
-const CELL = 12;
+const CELL = 18;
 // Width of a hill in the terrain, in px.
 const TERRAIN_SCALE = 360;
 // Every fifth line is an index contour, drawn heavier, as on a real map.
@@ -426,11 +426,12 @@ export default function TopoBackground({
     let last = 0;
     let lastPaint = 0;
     let raf = 0;
-    let visible = true;
+    let visible = false;
+    let hasPainted = false;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       width = rect.width;
       height = rect.height;
       canvas.width = Math.round(width * dpr);
@@ -599,46 +600,42 @@ export default function TopoBackground({
       }
     };
 
-    // Follow light and dark mode without asking the app for a theme. The
-    // check only runs while the map is on screen.
-    let colorTimer = 0;
+    // Follow light and dark mode via data-theme mutations without polling.
     const checkColor = () => {
       const next = getComputedStyle(canvas).color;
       if (next !== color) {
         color = next;
-        if (reduceMotion || !raf) {
+        if (visible && (reduceMotion || !raf)) {
           paint(performance.now());
         }
       }
     };
-    const watchColor = () => {
-      if (visible && !colorTimer) {
-        checkColor();
-        colorTimer = window.setInterval(checkColor, 500);
-      } else if (!visible && colorTimer) {
-        window.clearInterval(colorTimer);
-        colorTimer = 0;
-      }
-    };
 
     resize();
-    paint(performance.now());
     canvas.style.opacity = "1";
-    start();
 
     const resizeObserver = new ResizeObserver(() => {
       resize();
-      paint(performance.now());
+      if (visible) {
+        paint(performance.now());
+        hasPainted = true;
+      } else {
+        hasPainted = false;
+      }
     });
     resizeObserver.observe(canvas);
 
     // Stop drawing entirely while the map is scrolled away or the tab is
     // in the background.
-    let onScreen = true;
+    let onScreen = false;
     const updateVisible = () => {
       visible = onScreen && document.visibilityState === "visible";
-      watchColor();
       if (visible) {
+        checkColor();
+        if (!hasPainted || reduceMotion) {
+          paint(performance.now());
+          hasPainted = true;
+        }
         start();
       }
     };
@@ -648,7 +645,6 @@ export default function TopoBackground({
     });
     intersection.observe(root);
     document.addEventListener("visibilitychange", updateVisible);
-    watchColor();
 
     const themeObserver = new MutationObserver(() => {
       checkColor();
@@ -707,7 +703,6 @@ export default function TopoBackground({
       resizeObserver.disconnect();
       intersection.disconnect();
       document.removeEventListener("visibilitychange", updateVisible);
-      window.clearInterval(colorTimer);
       root.removeEventListener("pointermove", onMove);
       root.removeEventListener("pointerleave", onLeave);
       root.removeEventListener("pointerdown", onDown);

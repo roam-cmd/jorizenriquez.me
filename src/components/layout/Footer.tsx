@@ -15,7 +15,7 @@ const CURRENT_YEAR = new Date().getFullYear()
  */
 export function Footer() {
   return (
-    <footer className="relative z-10 border-t border-[var(--line-subtle)] bg-[var(--bg-footer)] py-10 backdrop-blur-[2px]">
+    <footer className="relative z-10 border-t border-[var(--line-subtle)] bg-[var(--bg-footer)] py-10">
       <RevealSection label="Footer" showToggle={false} typingMs={620}>
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between">
           <CodeRevealItem code={footerSnippets.brand}>

@@ -207,7 +207,7 @@ export function ProjectsSection() {
                       type="button"
                       onClick={handlePrev}
                       aria-label="Previous project"
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] text-[var(--fg-primary)] backdrop-blur-sm transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
                     >
                       <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                     </button>

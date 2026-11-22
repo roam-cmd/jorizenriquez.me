@@ -71,7 +71,7 @@ export function AboutSection() {
                       code={aboutSnippets.focusCard(area.label, area.detail)}
                       className="h-full"
                     >
-                      <div className="h-full rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-4 backdrop-blur-[2px]">
+                      <div className="h-full rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-4">
                         <h3 className="font-display text-sm font-semibold text-[var(--fg-primary)]">
                           {area.label}
                         </h3>
@@ -88,7 +88,7 @@ export function AboutSection() {
                 <CodeRevealItem code={aboutSnippets.snapshot}>
                   <aside
                     aria-label="Developer profile snapshot"
-                    className="rounded-2xl border border-[var(--line-border)] bg-[var(--bg-elevated-soft)] p-6 backdrop-blur-[2px]"
+                    className="rounded-2xl border border-[var(--line-border)] bg-[var(--bg-elevated-soft)] p-6"
                   >
                     <div className="mb-5 overflow-hidden rounded-xl border border-[var(--line-border)] bg-[var(--bg-base)]">
                       <img

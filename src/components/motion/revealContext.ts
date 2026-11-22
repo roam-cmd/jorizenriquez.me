@@ -16,6 +16,7 @@ export interface RevealSectionContextValue {
   manualInspect: boolean
   prefersReducedMotion: boolean
   getItemState: (id: string) => ItemRevealState
+  subscribeItem: (id: string, listener: () => void) => () => void
   registerItem: (id: string, element: HTMLElement) => () => void
 }
 
@@ -28,6 +29,7 @@ export const RevealSectionContext = createContext<RevealSectionContextValue>({
   manualInspect: false,
   prefersReducedMotion: false,
   getItemState: () => DEFAULT_ITEM_STATE,
+  subscribeItem: () => () => {},
   registerItem: () => () => {},
 })
 

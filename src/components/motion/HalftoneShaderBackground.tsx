@@ -358,6 +358,7 @@ export function HalftoneShaderBackground({
     let dpr = 1
     let widthPx = 1
     let heightPx = 1
+    let textureAllocated = false
     let rafId = 0
     let onScreen = true
     let isVisible = !document.hidden
@@ -498,14 +499,27 @@ export function HalftoneShaderBackground({
 
       gl.activeTexture(gl.TEXTURE0)
       gl.bindTexture(gl.TEXTURE_2D, sceneTexture)
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        simCanvas
-      )
+      if (!textureAllocated) {
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          simCanvas
+        )
+        textureAllocated = true
+      } else {
+        gl.texSubImage2D(
+          gl.TEXTURE_2D,
+          0,
+          0,
+          0,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          simCanvas
+        )
+      }
 
       gl.uniform2f(locs.resolution, widthPx, heightPx)
       gl.uniform1f(locs.dpr, dpr)
@@ -528,18 +542,20 @@ export function HalftoneShaderBackground({
       if (rect.width < 2 || rect.height < 2) {
         return
       }
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       widthPx = Math.round(rect.width * dpr)
       heightPx = Math.round(rect.height * dpr)
       canvas.width = widthPx
       canvas.height = heightPx
       gl.viewport(0, 0, widthPx, heightPx)
 
-      const simW = Math.max(160, Math.round(rect.width * 0.5))
-      const simH = Math.max(120, Math.round(rect.height * 0.5))
+      const simScale = Math.min(0.5, 720 / Math.max(rect.width, 1))
+      const simW = Math.max(160, Math.round(rect.width * simScale))
+      const simH = Math.max(120, Math.round(rect.height * simScale))
       if (simCanvas.width !== simW || simCanvas.height !== simH) {
         simCanvas.width = simW
         simCanvas.height = simH
+        textureAllocated = false
         simulation.resize(simW, simH)
       }
 

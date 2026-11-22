@@ -317,7 +317,7 @@ export default function HalftoneBackground({
       }
       width = rect.width;
       height = rect.height;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       base.width = canvas.width;
@@ -416,17 +416,6 @@ export default function HalftoneBackground({
     };
     document.addEventListener("visibilitychange", onVisibility);
 
-    // Follow light and dark mode without asking the app for a theme. Only
-    // checked while the background is on screen.
-    const themeTimer = window.setInterval(() => {
-      if (!visible) {
-        return;
-      }
-      if (readTheme()) {
-        build();
-      }
-    }, 500);
-
     const themeObserver = new MutationObserver(() => {
       if (readTheme()) {
         build();
@@ -484,7 +473,6 @@ export default function HalftoneBackground({
       resizeObserver.disconnect();
       intersection.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
-      window.clearInterval(themeTimer);
       if (image) {
         image.onload = null;
       }

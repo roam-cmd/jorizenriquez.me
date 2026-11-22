@@ -77,7 +77,7 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
                 <div
                   role="group"
                   aria-label="Filter timeline entries"
-                  className="inline-flex rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-1 backdrop-blur-[2px]"
+                  className="inline-flex rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-1"
                 >
                   {FILTERS.map((filter) => {
                     const isActive = activeFilter === filter
@@ -110,7 +110,7 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
                     className="absolute -left-[31px] top-6 h-3 w-3 rounded-full border-2 border-[var(--accent)] bg-[var(--bg-base)] sm:-left-[39px]"
                   />
                   <CodeRevealItem code={buildExperienceCardCode(entry)}>
-                    <article className="rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-6 backdrop-blur-[2px]">
+                    <article className="rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-6">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="font-mono text-xs text-[var(--accent)]">
                           {entry.period}
