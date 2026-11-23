@@ -346,7 +346,8 @@ export function ProjectsSection() {
                           }
                           isFeaturedSlot={isFeatured}
                           shouldCompile={isFeatured && hasEnteredView}
-                          compileDelayMs={navigationCount === 0 ? 1150 : 250}
+                          instantCompile={isFeatured && slotIndex !== trackPos}
+                          compileDelayMs={navigationCount === 0 ? 1150 : 220}
                         />
                       </CodeRevealItem>
                     </div>

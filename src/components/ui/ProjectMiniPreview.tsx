@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import type { ProjectItem } from '@/data/portfolio'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { type TokenType, tokenizeCodeLines } from '@/lib/syntaxHighlight'
@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 interface ProjectMiniPreviewProps {
   project: ProjectItem
   isActive: boolean
+  instantCompile?: boolean
   compileDelayMs?: number
 }
 
@@ -21,6 +22,31 @@ const DARK_PREVIEW_TOKEN_CLASS: Record<TokenType, string> = {
   punctuation: 'text-[var(--preview-subtle)]',
   plain: 'text-[var(--preview-fg)]',
 }
+
+const ASSAY_ACCENT_CELLS = [
+  { x: 40, y: 20, opacity: 0.52 },
+  { x: 40, y: 30, opacity: 0.52 },
+  { x: 50, y: 50, opacity: 0.52 },
+]
+
+const ASSAY_BRIGHT_CELLS = [
+  { x: 0, y: 0 },
+  { x: 50, y: 0 },
+  { x: 10, y: 10 },
+  { x: 60, y: 10 },
+  { x: 20, y: 20 },
+  { x: 70, y: 20 },
+  { x: 30, y: 30 },
+  { x: 80, y: 30 },
+  { x: 0, y: 40 },
+  { x: 10, y: 50 },
+  { x: 60, y: 50 },
+  { x: 20, y: 60 },
+  { x: 70, y: 60 },
+  { x: 30, y: 70 },
+  { x: 80, y: 70 },
+  { x: 40, y: 80 },
+]
 
 function renderMiniMockup(projectId: string) {
   switch (projectId) {
@@ -300,27 +326,64 @@ function renderMiniMockup(projectId: string) {
         <div className="grid h-full grid-cols-12 items-center gap-2.5 p-2.5">
           <div className="col-span-6 flex items-center justify-center">
             <div className="h-[112px] w-[112px] shrink-0 rounded-md border border-white/10 bg-[var(--preview-chrome)] p-1.5">
-              <div className="grid h-full w-full grid-cols-9 grid-rows-9 gap-[2px]">
-                {Array.from({ length: 81 }, (_, idx) => {
-                  const isCenter = idx === 40
-                  const isHighlight = idx === 22 || idx === 31 || idx === 50
-                  return (
-                    <span
-                      key={idx}
-                      className={cn(
-                        'block h-full w-full rounded-[1px]',
-                        isCenter
-                          ? 'bg-[var(--preview-accent)] shadow-[0_0_6px_rgba(var(--preview-accent-rgb),0.9)]'
-                          : isHighlight
-                            ? 'bg-[rgba(var(--preview-accent-rgb),0.52)]'
-                            : idx % 5 === 0
-                              ? 'bg-white/25'
-                              : 'bg-white/10'
-                      )}
+              {/* Single lightweight SVG instead of 81 DOM nodes for instant GPU compositing */}
+              <svg
+                viewBox="0 0 88 88"
+                className="h-full w-full"
+                aria-hidden="true"
+              >
+                <defs>
+                  <pattern
+                    id="assay-grid-pattern"
+                    width="10"
+                    height="10"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <rect
+                      width="8"
+                      height="8"
+                      rx="1"
+                      fill="rgba(255,255,255,0.1)"
                     />
-                  )
-                })}
-              </div>
+                  </pattern>
+                </defs>
+                <rect
+                  width="88"
+                  height="88"
+                  fill="url(#assay-grid-pattern)"
+                />
+                {ASSAY_BRIGHT_CELLS.map((cell, i) => (
+                  <rect
+                    key={i}
+                    x={cell.x}
+                    y={cell.y}
+                    width="8"
+                    height="8"
+                    rx="1"
+                    fill="rgba(255,255,255,0.24)"
+                  />
+                ))}
+                {ASSAY_ACCENT_CELLS.map((cell, i) => (
+                  <rect
+                    key={i}
+                    x={cell.x}
+                    y={cell.y}
+                    width="8"
+                    height="8"
+                    rx="1"
+                    fill="var(--preview-accent)"
+                    fillOpacity={cell.opacity}
+                  />
+                ))}
+                <rect
+                  x="40"
+                  y="40"
+                  width="8"
+                  height="8"
+                  rx="1"
+                  fill="var(--preview-accent)"
+                />
+              </svg>
             </div>
           </div>
 
@@ -380,13 +443,15 @@ function renderMiniMockup(projectId: string) {
 
 /**
  * Miniature dark-mode preview window that rests as syntax-highlighted source code
- * on inactive cards and sweeps a vertical theme-matched scanline to reveal a bespoke
- * compiled UI mockup when the card enters the center spotlight.
+ * on inactive cards and sweeps a 100% GPU-composited (`translate3d`) vertical
+ * theme-matched scanline to reveal a bespoke compiled UI mockup when the card
+ * enters the center spotlight.
  */
-export function ProjectMiniPreview({
+export const ProjectMiniPreview = memo(function ProjectMiniPreview({
   project,
   isActive,
-  compileDelayMs = 250,
+  instantCompile = false,
+  compileDelayMs = 220,
 }: ProjectMiniPreviewProps) {
   const prefersReducedMotion = usePrefersReducedMotion()
 
@@ -395,9 +460,12 @@ export function ProjectMiniPreview({
     [project.previewCode]
   )
 
+  const skipScanline = prefersReducedMotion || instantCompile
+  const runScanline = isActive && !skipScanline
+
   const timingStyle = {
     '--scanline-delay': `${compileDelayMs}ms`,
-    '--glow-delay': `${compileDelayMs + 520}ms`,
+    '--glow-delay': `${compileDelayMs + 460}ms`,
   } as CSSProperties
 
   return (
@@ -408,12 +476,11 @@ export function ProjectMiniPreview({
     >
       {/* Radial theme-matched glow behind compiled preview */}
       <div
-        key={isActive ? 'glow-active' : 'glow-idle'}
         className={cn(
           'pointer-events-none absolute inset-0',
           !isActive && 'opacity-0',
-          isActive && prefersReducedMotion && 'opacity-100',
-          isActive && !prefersReducedMotion && 'animate-preview-glow'
+          isActive && skipScanline && 'opacity-100',
+          runScanline && 'animate-preview-glow'
         )}
         style={{
           background:
@@ -447,77 +514,80 @@ export function ProjectMiniPreview({
 
         {/* Preview stage */}
         <div className="relative flex-1 overflow-hidden">
-          {/* Layer 1: Syntax-highlighted source code */}
+          {/* Layer 1 (Bottom, stationary): Compiled bespoke mini-UI */}
           <div
-            key={isActive ? 'code-active' : 'code-idle'}
-            className={cn(
-              'absolute inset-0 flex items-center overflow-hidden px-3 py-2',
-              isActive && prefersReducedMotion && 'hidden',
-              isActive && !prefersReducedMotion && 'animate-scanline-code-wipe'
-            )}
-          >
-            <pre className="m-0 w-full overflow-hidden font-mono text-[10.5px] leading-[1.55]">
-              <code>
-                {tokenizedLines.map((lineTokens, lineIdx) => (
-                  <span key={lineIdx} className="flex items-baseline gap-2.5">
-                    <span className="w-4 shrink-0 select-none text-right text-[9px] text-[var(--preview-subtle)] tabular-nums">
-                      {String(lineIdx + 1).padStart(2, '0')}
-                    </span>
-                    <span className="truncate">
-                      {lineTokens.map((token, tokenIdx) => (
-                        <span
-                          key={tokenIdx}
-                          className={DARK_PREVIEW_TOKEN_CLASS[token.type]}
-                        >
-                          {token.value}
-                        </span>
-                      ))}
-                    </span>
-                  </span>
-                ))}
-              </code>
-            </pre>
-          </div>
-
-          {/* Layer 2: Compiled bespoke mini-UI */}
-          <div
-            key={isActive ? 'ui-active' : 'ui-idle'}
             className={cn(
               'absolute inset-0',
               !isActive && 'pointer-events-none opacity-0',
-              isActive && prefersReducedMotion && 'opacity-100',
-              isActive && !prefersReducedMotion && 'animate-scanline-ui-reveal'
+              isActive && 'opacity-100'
             )}
           >
             {renderMiniMockup(project.id)}
           </div>
 
-          {/* Layer 3: Glowing horizontal theme-matched scanline beam */}
-          {isActive && !prefersReducedMotion && (
+          {/* Layer 2 (Top curtain): Counter-translated GPU mask revealing the UI underneath without clip-path */}
+          <div
+            className={cn(
+              'absolute inset-0 overflow-hidden',
+              isActive && skipScanline && 'pointer-events-none translate-y-full',
+              runScanline && 'animate-scanline-mask-down'
+            )}
+          >
             <div
-              key="scanline-beam"
-              className="animate-scanline-beam pointer-events-none absolute inset-x-0 z-20 -translate-y-full"
+              className={cn(
+                'absolute inset-0 flex items-center overflow-hidden bg-[var(--preview-window)] px-3 py-2',
+                runScanline && 'animate-scanline-content-counter'
+              )}
             >
-              <div
-                className="h-4 w-full"
-                style={{
-                  background:
-                    'linear-gradient(to bottom, transparent, rgba(var(--preview-accent-rgb), 0.22))',
-                }}
-              />
-              <div
-                className="h-[2px] w-full"
-                style={{
-                  background:
-                    'linear-gradient(to right, transparent, var(--preview-accent), transparent)',
-                  boxShadow:
-                    '0 0 14px 2px rgba(var(--preview-accent-rgb), 0.9)',
-                }}
-              />
+              <pre className="m-0 w-full overflow-hidden font-mono text-[10.5px] leading-[1.55]">
+                <code>
+                  {tokenizedLines.map((lineTokens, lineIdx) => (
+                    <span key={lineIdx} className="flex items-baseline gap-2.5">
+                      <span className="w-4 shrink-0 select-none text-right text-[9px] text-[var(--preview-subtle)] tabular-nums">
+                        {String(lineIdx + 1).padStart(2, '0')}
+                      </span>
+                      <span className="truncate">
+                        {lineTokens.map((token, tokenIdx) => (
+                          <span
+                            key={tokenIdx}
+                            className={DARK_PREVIEW_TOKEN_CLASS[token.type]}
+                          >
+                            {token.value}
+                          </span>
+                        ))}
+                      </span>
+                    </span>
+                  ))}
+                </code>
+              </pre>
+            </div>
+          </div>
+
+          {/* Layer 3: 100% GPU-translated horizontal scanline beam */}
+          {runScanline && (
+            <div className="animate-scanline-beam pointer-events-none absolute inset-0 z-20">
+              <div className="-translate-y-full">
+                <div
+                  className="h-4 w-full"
+                  style={{
+                    background:
+                      'linear-gradient(to bottom, transparent, rgba(var(--preview-accent-rgb), 0.22))',
+                  }}
+                />
+                <div
+                  className="h-[2px] w-full"
+                  style={{
+                    background:
+                      'linear-gradient(to right, transparent, var(--preview-accent), transparent)',
+                    boxShadow:
+                      '0 0 12px 1.5px rgba(var(--preview-accent-rgb), 0.85)',
+                  }}
+                />
+              </div>
             </div>
           )}
         </div>
       </div>
     </div>
   )
-}
+})

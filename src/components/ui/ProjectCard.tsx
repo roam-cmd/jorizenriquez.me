@@ -10,6 +10,7 @@ interface ProjectCardProps {
   onSelectCard?: () => void
   isFeaturedSlot?: boolean
   shouldCompile?: boolean
+  instantCompile?: boolean
   compileDelayMs?: number
 }
 
@@ -23,7 +24,8 @@ export const ProjectCard = memo(function ProjectCard({
   onSelectCard,
   isFeaturedSlot = false,
   shouldCompile = isFeaturedSlot,
-  compileDelayMs = 250,
+  instantCompile = false,
+  compileDelayMs = 220,
 }: ProjectCardProps) {
   const isExternalDemo = Boolean(project.demoUrl?.startsWith('http'))
   const isSideClickable = !isFeaturedSlot && Boolean(onSelectCard)
@@ -41,16 +43,17 @@ export const ProjectCard = memo(function ProjectCard({
           : undefined
       }
       className={cn(
-        'group relative flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-surface-translucent)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+        'group relative flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-surface-translucent)] will-change-[transform,opacity] transition-[transform,opacity,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
         isSideClickable && 'cursor-pointer',
         isFeaturedSlot
-          ? 'z-20 -translate-y-2 border-[rgba(var(--accent-rgb),0.65)] border-t-2 border-t-[var(--accent)] opacity-100 ring-1 ring-[rgba(var(--accent-rgb),0.32)] shadow-[0_0_0_1px_rgba(var(--accent-rgb),0.28),0_24px_54px_-14px_rgba(var(--accent-rgb),0.34),0_0_34px_-8px_rgba(var(--accent-rgb),0.22)] lg:-translate-y-4 lg:scale-[1.03]'
-          : 'z-10 translate-y-3 scale-[0.93] border-[var(--line-subtle)] opacity-40 brightness-[0.82] hover:border-[var(--accent)] hover:opacity-65 hover:brightness-95'
+          ? 'z-20 -translate-y-1 border-[rgba(var(--accent-rgb),0.65)] border-t-2 border-t-[var(--accent)] opacity-100 ring-1 ring-[rgba(var(--accent-rgb),0.32)] shadow-[0_0_0_1px_rgba(var(--accent-rgb),0.28),0_24px_54px_-14px_rgba(var(--accent-rgb),0.34),0_0_34px_-8px_rgba(var(--accent-rgb),0.22)] sm:-translate-y-2 lg:-translate-y-4 lg:scale-[1.03]'
+          : 'z-10 translate-y-2 scale-[0.94] border-[var(--line-subtle)] opacity-45 hover:border-[var(--accent)] hover:opacity-70 lg:translate-y-3 lg:scale-[0.93]'
       )}
     >
       <ProjectMiniPreview
         project={project}
         isActive={shouldCompile}
+        instantCompile={instantCompile}
         compileDelayMs={compileDelayMs}
       />
 
