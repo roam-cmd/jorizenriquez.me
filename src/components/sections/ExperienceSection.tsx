@@ -110,7 +110,7 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
                     className="absolute -left-[31px] top-6 h-3 w-3 rounded-full border-2 border-[var(--accent)] bg-[var(--bg-base)] sm:-left-[39px]"
                   />
                   <CodeRevealItem code={buildExperienceCardCode(entry)}>
-                    <article className="rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-6">
+                    <article className="theme-card rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-6">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="font-mono text-xs text-[var(--accent)]">
                           {entry.period}

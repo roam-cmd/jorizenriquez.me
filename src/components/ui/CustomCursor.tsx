@@ -278,7 +278,7 @@ export function CustomCursor() {
         <span
           key={ripple.id}
           style={{ left: ripple.x, top: ripple.y }}
-          className="animate-cursor-ripple fixed h-7 w-7 rounded-full border border-[var(--accent)]/75"
+          className="animate-cursor-ripple fixed h-7 w-7 rounded-full border border-[var(--cursor-ring)]"
         />
       ))}
 
@@ -287,17 +287,20 @@ export function CustomCursor() {
         ref={ringRef}
         className={cn(
           'fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 will-change-transform transition-opacity duration-200',
-          visible ? (idle ? 'opacity-35' : 'opacity-100') : 'opacity-0'
+          visible ? (idle ? 'opacity-40' : 'opacity-100') : 'opacity-0'
         )}
       >
         <div
+          style={{
+            boxShadow: '0 0 0 1px var(--cursor-halo)',
+          }}
           className={cn(
             'relative flex h-10 w-10 items-center justify-center rounded-full border transition-transform duration-150 ease-out',
             variant === 'text'
-              ? 'scale-[0.52] border-[var(--accent)]/40 bg-transparent'
+              ? 'scale-[0.52] border-[var(--cursor-ring)]/65 bg-transparent'
               : isExpanded
-                ? 'scale-100 border-[var(--accent)] bg-[var(--accent-tint)]'
-                : 'scale-[0.7] border-[var(--accent)]/60 bg-transparent',
+                ? 'scale-100 border-[var(--cursor-ring)] bg-[var(--cursor-tint)]'
+                : 'scale-[0.7] border-[var(--cursor-ring)]/85 bg-transparent',
             pressed && variant !== 'text' && 'scale-[0.58]'
           )}
         >
@@ -309,27 +312,33 @@ export function CustomCursor() {
                 isExpanded ? 'rotate-45' : 'rotate-0'
               )}
             >
-              <span className="absolute -top-1 left-1/2 h-1.5 w-px -translate-x-1/2 bg-[var(--accent)]/80" />
-              <span className="absolute -bottom-1 left-1/2 h-1.5 w-px -translate-x-1/2 bg-[var(--accent)]/80" />
-              <span className="absolute top-1/2 -left-1 h-px w-1.5 -translate-y-1/2 bg-[var(--accent)]/80" />
-              <span className="absolute top-1/2 -right-1 h-px w-1.5 -translate-y-1/2 bg-[var(--accent)]/80" />
+              <span className="absolute -top-1 left-1/2 h-1.5 w-px -translate-x-1/2 bg-[var(--cursor-ring)]" />
+              <span className="absolute -bottom-1 left-1/2 h-1.5 w-px -translate-x-1/2 bg-[var(--cursor-ring)]" />
+              <span className="absolute top-1/2 -left-1 h-px w-1.5 -translate-y-1/2 bg-[var(--cursor-ring)]" />
+              <span className="absolute top-1/2 -right-1 h-px w-1.5 -translate-y-1/2 bg-[var(--cursor-ring)]" />
             </div>
           )}
 
           {/* Subtle processing orbital arc while sections compile */}
           {processing && variant !== 'text' && (
-            <span className="animate-cursor-orbit absolute -inset-1.5 rounded-full border border-dashed border-[var(--accent)]/75" />
+            <span className="animate-cursor-orbit absolute -inset-1.5 rounded-full border border-dashed border-[var(--cursor-ring)]" />
           )}
 
           {/* Contextual micro-badges */}
           {variant === 'code' && (
-            <span className="font-mono text-[9px] font-semibold tracking-tighter text-[var(--fg-primary)]">
+            <span
+              style={{ textShadow: '0 1px 2px var(--cursor-halo)' }}
+              className="font-mono text-[9px] font-semibold tracking-tighter text-[var(--cursor-ring)]"
+            >
               &lt;/&gt;
             </span>
           )}
 
           {variant === 'external' && (
-            <span className="absolute -top-1.5 -right-2 font-mono text-[10px] leading-none text-[var(--accent)]">
+            <span
+              style={{ textShadow: '0 1px 2px var(--cursor-halo)' }}
+              className="absolute -top-1.5 -right-2 font-mono text-[10px] leading-none text-[var(--cursor-ring)]"
+            >
               &#8599;
             </span>
           )}
@@ -345,11 +354,14 @@ export function CustomCursor() {
         )}
       >
         <span
+          style={{
+            boxShadow: '0 0 0 1px var(--cursor-ring)',
+          }}
           className={cn(
             'block transition-transform duration-150 ease-out',
             variant === 'text'
-              ? 'h-5 w-[2px] rounded-full bg-[var(--accent)]'
-              : 'h-1.5 w-1.5 rounded-full bg-[var(--fg-primary)]',
+              ? 'h-5 w-[2px] rounded-full bg-[var(--cursor-ring)]'
+              : 'h-2 w-2 rounded-full bg-[var(--cursor-dot)]',
             pressed && variant !== 'text' && 'scale-125'
           )}
         />

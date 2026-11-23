@@ -66,7 +66,7 @@ export function ContactSection() {
               </CodeRevealItem>
             </div>
 
-            <div className="grid gap-8 rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface)]/95 p-6 sm:p-8 lg:grid-cols-12 lg:items-center">
+            <div className="theme-card grid gap-8 rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface)]/95 p-6 sm:p-8 lg:grid-cols-12 lg:items-center">
               <div className="space-y-4 lg:col-span-7">
                 <CodeRevealItem code={contactSnippets.intro}>
                   <div className="space-y-4">

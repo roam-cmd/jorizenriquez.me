@@ -32,7 +32,7 @@ export function AboutSection() {
           loupe
         >
           <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
-            <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
               <div className="space-y-6 lg:col-span-7">
                 <div id="about-heading">
                   <CodeRevealItem
@@ -46,7 +46,6 @@ export function AboutSection() {
                       index="01"
                       eyebrow="ABOUT"
                       title="Background & Engineering Approach"
-                      description="An honest overview of how I think about building software and where my curiosity is focused."
                     />
                   </CodeRevealItem>
                 </div>
@@ -71,7 +70,7 @@ export function AboutSection() {
                       code={aboutSnippets.focusCard(area.label, area.detail)}
                       className="h-full"
                     >
-                      <div className="h-full rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-4">
+                      <div className="theme-card h-full rounded-xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] p-4">
                         <h3 className="font-display text-sm font-semibold text-[var(--fg-primary)]">
                           {area.label}
                         </h3>
@@ -88,7 +87,7 @@ export function AboutSection() {
                 <CodeRevealItem code={aboutSnippets.snapshot}>
                   <aside
                     aria-label="Developer profile snapshot"
-                    className="rounded-2xl border border-[var(--line-border)] bg-[var(--bg-elevated-soft)] p-6"
+                    className="theme-card rounded-2xl border border-[var(--line-border)] bg-[var(--bg-elevated-soft)] p-6"
                   >
                     <div className="mb-5 overflow-hidden rounded-xl border border-[var(--line-border)] bg-[var(--bg-base)]">
                       <img

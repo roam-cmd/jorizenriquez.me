@@ -798,8 +798,8 @@ export default function PageFlip({
         className={cn(
           "relative shrink-0 rounded-md motion-reduce:transition-none",
           single
-            ? "w-[200%] self-start shadow-[0_20px_42px_-14px_rgba(0,0,0,0.58)]"
-            : "w-full shadow-[0_24px_48px_-14px_rgba(0,0,0,0.62)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+            ? "w-[200%] self-start"
+            : "w-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
         )}
         style={{ transform: `translateX(${single ? -50 : shift * 100}%)` }}
       >
@@ -813,6 +813,16 @@ export default function PageFlip({
           ref={bookRef}
           style={{ touchAction: "pan-y" }}
         >
+          {/* Ambient book drop shadow scoped strictly to the visible page footprint (no empty half-book shadow when closed or in single-page mode) */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 rounded-md shadow-[0_22px_46px_-14px_rgba(0,0,0,0.60)] transition-[left,right] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none"
+            style={{
+              left: single ? "50%" : shift < 0 ? "50%" : "0%",
+              right: single ? "0%" : shift > 0 ? "50%" : "0%",
+            }}
+          />
+
           {left !== undefined && (
             <Paper
               isCover={leftIsCover}
@@ -855,7 +865,7 @@ export default function PageFlip({
             <div
               className="pointer-events-none absolute inset-0"
               style={{
-                filter: `drop-shadow(0 ${2 + fold.progress * 8}px ${8 + fold.progress * 12}px rgb(0 0 0 / ${0.18 + Math.sin(Math.PI * fold.progress) * 0.22}))`,
+                filter: `drop-shadow(0 ${2 + fold.progress * 8}px ${8 + fold.progress * 12}px rgb(0 0 0 / ${0.14 + Math.sin(Math.PI * fold.progress) * 0.22}))`,
               }}
             >
               <Paper
@@ -939,19 +949,17 @@ function Paper({
   style?: CSSProperties;
   children: ReactNode;
 }) {
-  // Deepen the inner spine shadow naturally as the page rotates through 45°–90°
+  // Smoothly interpolate lighting across the turn so the back flap seamlessly blends into the settled page surface without a color jump
   const midTurnAngle = Math.sin(Math.PI * turnProgress);
-  const spineShadowOpacity = Math.min(0.68, 0.32 + midTurnAngle * 0.28);
+  const spineShadowOpacity = Math.min(0.56, 0.24 + midTurnAngle * 0.22);
+  const flapSheenOpacity = back ? (1 - turnProgress) * 0.07 : 0;
 
   return (
     <div
       className={cn(
-        "@container absolute top-0 h-full w-1/2 origin-top-left overflow-hidden text-[var(--fg-primary)]",
-        isCover
-          ? "bg-[var(--bg-elevated)] shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_1px_0_0_rgba(255,255,255,0.08)]"
-          : back
-            ? "bg-[var(--bg-elevated)]/95"
-            : "bg-[var(--bg-surface)]",
+        "theme-card @container absolute top-0 h-full w-1/2 origin-top-left overflow-hidden bg-[var(--bg-surface)] text-[var(--fg-primary)] transition-colors duration-200",
+        isCover &&
+          "shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_1px_0_0_rgba(255,255,255,0.07)]",
         side === "left" ? "left-0 rounded-l-md" : "left-1/2 rounded-r-md",
         "ring-1 ring-[var(--line-border)]"
       )}
@@ -962,10 +970,24 @@ function Paper({
     >
       {/* The back of a page reads the right way round once it's folded over. */}
       <div
-        className={cn("relative size-full", back && "-scale-x-100")}
-        style={{ backfaceVisibility: "hidden" }}
+        className="relative size-full"
+        style={{
+          backfaceVisibility: "hidden",
+          transform: back ? "scaleX(-1) translateZ(0)" : "translateZ(0)",
+        }}
       >
         <div className="size-full">{children}</div>
+
+        {/* Dynamic fold highlight on the turning flap that smoothly fades to 0 as the page lands */}
+        {back && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundColor: `rgba(255, 255, 255, ${flapSheenOpacity.toFixed(4)})`,
+            }}
+          />
+        )}
 
         {/* Cover lighting: subtle outer bevel & top-left ambient sheen, NO inner gutter crease */}
         {isCover ? (
@@ -974,7 +996,7 @@ function Paper({
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.025) 38%, transparent 68%, rgba(0, 0, 0, 0.16) 100%)",
+                "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 68%, rgba(0, 0, 0, 0.14) 100%)",
             }}
           />
         ) : (

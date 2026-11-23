@@ -46,7 +46,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       onClick={onClose}
     >
       <div
-        className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface)] p-6 shadow-2xl sm:p-8"
+        className="theme-card max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface)] p-6 shadow-2xl sm:p-8"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">

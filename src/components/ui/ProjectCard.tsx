@@ -43,7 +43,7 @@ export const ProjectCard = memo(function ProjectCard({
           : undefined
       }
       className={cn(
-        'group relative flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-surface-translucent)] will-change-[transform,opacity] transition-[transform,opacity,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+        'theme-card group relative flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-surface-translucent)] will-change-[transform,opacity] transition-[transform,opacity,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
         isSideClickable && 'cursor-pointer',
         isFeaturedSlot
           ? 'z-20 -translate-y-1 border-[rgba(var(--accent-rgb),0.65)] border-t-2 border-t-[var(--accent)] opacity-100 ring-1 ring-[rgba(var(--accent-rgb),0.32)] shadow-[0_0_0_1px_rgba(var(--accent-rgb),0.28),0_24px_54px_-14px_rgba(var(--accent-rgb),0.34),0_0_34px_-8px_rgba(var(--accent-rgb),0.22)] sm:-translate-y-2 lg:-translate-y-4 lg:scale-[1.03]'

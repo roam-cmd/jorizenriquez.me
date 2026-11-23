@@ -3,6 +3,7 @@ interface SectionHeaderProps {
   eyebrow: string
   title: string
   description?: string
+  className?: string
 }
 
 /**
@@ -13,9 +14,15 @@ export function SectionHeader({
   eyebrow,
   title,
   description,
+  className,
 }: SectionHeaderProps) {
   return (
-    <div className="mb-8 max-w-2xl sm:mb-12">
+    <div
+      className={
+        className ??
+        (description ? 'mb-8 max-w-2xl sm:mb-12' : 'mb-2 max-w-2xl')
+      }
+    >
       <p className="font-mono text-xs tracking-widest text-[var(--accent)] uppercase">
         {index} // {eyebrow}
       </p>

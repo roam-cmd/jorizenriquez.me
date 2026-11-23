@@ -18,7 +18,7 @@
               : 'midnight';
           var root = document.documentElement;
           root.dataset.theme = theme;
-          root.classList.toggle('dark', theme !== 'sage-stone');
+          root.classList.add('dark');
           var meta = document.querySelector('meta[name="theme-color"]');
           if (meta) {
             meta.setAttribute(
@@ -26,7 +26,7 @@
               theme === 'slate-sand'
                 ? '#222831'
                 : theme === 'sage-stone'
-                  ? '#EEEEEE'
+                  ? '#3E0703'
                   : '#0B0E0E'
             );
           }

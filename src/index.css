@@ -76,6 +76,11 @@
     --accent-tint: rgba(165, 201, 202, 0.12);
     --accent-rgb: 165, 201, 202;
 
+    --cursor-ring: #A5C9CA;
+    --cursor-dot: #E7F6F2;
+    --cursor-tint: rgba(165, 201, 202, 0.14);
+    --cursor-halo: rgba(11, 14, 14, 0.72);
+
     --preview-accent: #A5C9CA;
     --preview-accent-rgb: 165, 201, 202;
     --preview-bg: #090D10;
@@ -162,6 +167,11 @@
     --accent-tint: rgba(223, 208, 184, 0.12);
     --accent-rgb: 223, 208, 184;
 
+    --cursor-ring: #DFD0B8;
+    --cursor-dot: #F5EFE6;
+    --cursor-tint: rgba(223, 208, 184, 0.14);
+    --cursor-halo: rgba(34, 40, 49, 0.75);
+
     --preview-accent: #DFD0B8;
     --preview-accent-rgb: 223, 208, 184;
     --preview-bg: #181D24;
@@ -214,80 +224,119 @@
     --ring: #DFD0B8;
 }
 
-/* Theme 3 — Muted Sage & Neutral (#777C6D, #B7B89F, #CBCBCB, #EEEEEE) */
+/* Theme 3 — Velvet & Gold (#3E0703, #660B05, #8C1007, #FFF0C4) */
 [data-theme="sage-stone"] {
-    color-scheme: light;
+    color-scheme: dark;
 
-    --bg-base: #EEEEEE;
-    --bg-surface: #F7F7F4;
-    --bg-surface-translucent: rgba(247, 247, 244, 0.88);
-    --bg-elevated: #E2E3DC;
-    --bg-elevated-soft: rgba(183, 184, 159, 0.28);
-    --bg-nav: rgba(238, 238, 238, 0.88);
-    --bg-footer: rgba(238, 238, 238, 0.84);
+    --bg-base: #3E0703;
+    --bg-surface: #520904;
+    --bg-surface-translucent: rgba(82, 9, 4, 0.90);
+    --bg-elevated: #660B05;
+    --bg-elevated-soft: rgba(140, 16, 7, 0.45);
+    --bg-nav: rgba(62, 7, 3, 0.88);
+    --bg-footer: rgba(62, 7, 3, 0.84);
 
-    --fg-primary: #242820;
-    --fg-muted: #4E5347;
-    --fg-subtle: #6E7365;
-    --name-hover: #555C4C;
+    --fg-primary: #FFF8E6;
+    --fg-muted: #E8D5A5;
+    --fg-subtle: #BA9A72;
+    --name-hover: #FFF0C4;
 
-    --accent: #5C6252;
-    --accent-hover: #464B3E;
-    --accent-fg: #F7F7F4;
-    --accent-soft: #777C6D;
-    --accent-tint: rgba(119, 124, 109, 0.14);
-    --accent-rgb: 92, 98, 82;
+    --accent: #FFF0C4;
+    --accent-hover: #FFF8E6;
+    --accent-fg: #3E0703;
+    --accent-soft: #8C1007;
+    --accent-tint: rgba(255, 240, 196, 0.14);
+    --accent-rgb: 255, 240, 196;
 
-    --preview-accent: #C5CEB4;
-    --preview-accent-rgb: 197, 206, 180;
-    --preview-bg: #1B1E18;
-    --preview-window: #22261F;
-    --preview-surface: #2B3027;
-    --preview-chrome: #1C2019;
-    --preview-fg: #F0F2EC;
-    --preview-muted: #B7BFA9;
-    --preview-subtle: #8C947F;
-    --preview-accent-fg: #1B1E18;
+    --cursor-ring: #2DD4BF;
+    --cursor-dot: #0F766E;
+    --cursor-tint: rgba(45, 212, 191, 0.22);
+    --cursor-halo: rgba(19, 78, 74, 0.85);
 
-    --line-border: rgba(119, 124, 109, 0.36);
-    --line-subtle: rgba(203, 203, 203, 0.90);
+    --preview-accent: #FFF0C4;
+    --preview-accent-rgb: 255, 240, 196;
+    --preview-bg: #260402;
+    --preview-window: #330603;
+    --preview-surface: #470804;
+    --preview-chrome: #2B0502;
+    --preview-fg: #FFF8E6;
+    --preview-muted: #E8D5A5;
+    --preview-subtle: #BA9A72;
+    --preview-accent-fg: #3E0703;
 
-    --flow-far-rgb: 183, 184, 159;
-    --flow-mid-rgb: 119, 124, 109;
-    --flow-front-rgb: 119, 124, 109;
-    --flow-hero-far: 0.36;
+    --line-border: rgba(255, 240, 196, 0.24);
+    --line-subtle: rgba(140, 16, 7, 0.55);
+
+    --flow-far-rgb: 102, 11, 5;
+    --flow-mid-rgb: 140, 16, 7;
+    --flow-front-rgb: 255, 240, 196;
+    --flow-hero-far: 0.24;
     --flow-hero-mid: 0.28;
     --flow-hero-front: 0.38;
-    --flow-cascade-far: 0.24;
+    --flow-cascade-far: 0.16;
     --flow-cascade-mid: 0.20;
     --flow-cascade-front: 0.28;
 
-    --syntax-comment: #7A8070;
-    --syntax-keyword: #4A5041;
-    --syntax-string: #242820;
-    --syntax-tag: #5E6454;
-    --syntax-prop: #6A7060;
-    --syntax-type: #3D4235;
-    --syntax-punctuation: #8C9182;
-    --syntax-plain: #31362B;
-    --syntax-glow: rgba(119, 124, 109, 0.12);
+    --syntax-comment: #E8C79C;
+    --syntax-keyword: #FFF0C4;
+    --syntax-string: #FFF9E8;
+    --syntax-tag: #FFE08A;
+    --syntax-prop: #F7D794;
+    --syntax-type: #FFF5D6;
+    --syntax-punctuation: #E6B88A;
+    --syntax-plain: #FFF2CC;
+    --syntax-glow: rgba(30, 3, 1, 0.85);
 
-    --background: #EEEEEE;
-    --foreground: #242820;
-    --card: #F7F7F4;
-    --card-foreground: #242820;
-    --popover: #F7F7F4;
-    --popover-foreground: #242820;
-    --primary: #5C6252;
-    --primary-foreground: #F7F7F4;
-    --secondary: #E2E3DC;
-    --secondary-foreground: #242820;
-    --muted: #E2E3DC;
-    --muted-foreground: #4E5347;
-    --accent-foreground: #242820;
-    --border: rgba(119, 124, 109, 0.36);
-    --input: rgba(119, 124, 109, 0.42);
-    --ring: #5C6252;
+    --background: #3E0703;
+    --foreground: #FFF8E6;
+    --card: #520904;
+    --card-foreground: #FFF8E6;
+    --popover: #520904;
+    --popover-foreground: #FFF8E6;
+    --primary: #FFF0C4;
+    --primary-foreground: #3E0703;
+    --secondary: #660B05;
+    --secondary-foreground: #FFF8E6;
+    --muted: #660B05;
+    --muted-foreground: #E8D5A5;
+    --accent-foreground: #FFF8E6;
+    --border: rgba(255, 240, 196, 0.24);
+    --input: rgba(255, 240, 196, 0.28);
+    --ring: #FFF0C4;
+}
+
+/* Custom dark-surface card rules for Theme 3 (Crimson & Buttercream):
+ * The page base stays deep garnet (#3E0703) with buttercream text (#FFF8E6),
+ * while cards flip to buttercream (#FFF0C4) surfaces with deep garnet text and crimson accents. */
+[data-theme="sage-stone"] .theme-card {
+    --bg-base: #F2DFAA;
+    --bg-surface: #FFF0C4;
+    --bg-surface-translucent: rgba(255, 240, 196, 0.96);
+    --bg-elevated: #F5E3B0;
+    --bg-elevated-soft: rgba(245, 227, 176, 0.85);
+    --fg-primary: #3E0703;
+    --fg-muted: #660B05;
+    --fg-subtle: #8C1007;
+    --accent: #8C1007;
+    --accent-hover: #660B05;
+    --accent-fg: #FFF0C4;
+    --accent-soft: #660B05;
+    --accent-tint: rgba(140, 16, 7, 0.12);
+    --accent-rgb: 140, 16, 7;
+    --line-border: rgba(102, 11, 5, 0.24);
+    --line-subtle: rgba(102, 11, 5, 0.16);
+    --syntax-comment: #8C4A3E;
+    --syntax-keyword: #8C1007;
+    --syntax-string: #3E0703;
+    --syntax-tag: #A3140A;
+    --syntax-prop: #660B05;
+    --syntax-type: #520904;
+    --syntax-punctuation: #8C1007;
+    --syntax-plain: #3E0703;
+    --syntax-glow: rgba(255, 240, 196, 0.90);
+    background-color: #FFF0C4;
+    color: #3E0703;
+    border-color: rgba(102, 11, 5, 0.26);
 }
 
 @layer base {

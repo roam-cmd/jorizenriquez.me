@@ -663,9 +663,9 @@ export function CodeRevealItem({
         <div
           aria-hidden="true"
           className={cn(
-            'pointer-events-none absolute inset-0 z-10 flex overflow-hidden transition-all duration-300 ease-out',
+            'pointer-events-none absolute inset-0 z-10 flex overflow-hidden rounded-lg bg-[var(--bg-base)]/80 backdrop-blur-[2px] transition-all duration-300 ease-out',
             align === 'center'
-              ? 'items-center justify-start px-1'
+              ? 'items-center justify-start px-1.5'
               : 'items-start justify-start p-2 sm:p-3',
             !manualInspect && phase === 'materializing'
               ? 'opacity-0 blur-[2px] scale-[0.99]'
@@ -674,7 +674,7 @@ export function CodeRevealItem({
         >
           <pre
             className={cn(
-              'm-0 max-w-full overflow-hidden font-mono leading-relaxed drop-shadow-[0_0_8px_var(--syntax-glow)]',
+              'm-0 max-w-full overflow-hidden font-mono leading-relaxed drop-shadow-[0_1px_2px_var(--syntax-glow)]',
               inline
                 ? 'truncate text-[11px] sm:text-xs'
                 : 'whitespace-pre-wrap break-words text-[11px] sm:text-xs'

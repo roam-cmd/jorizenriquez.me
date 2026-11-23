@@ -33,12 +33,12 @@ export const THEME_OPTIONS: ThemeOption[] = [
   },
   {
     id: 'sage-stone',
-    label: 'Sage',
-    description: 'Muted sage & stone',
-    swatchBg: '#EEEEEE',
-    swatchAccent: '#777C6D',
-    isDark: false,
-    themeColor: '#EEEEEE',
+    label: 'Crimson',
+    description: 'Deep garnet, crimson & buttercream',
+    swatchBg: '#3E0703',
+    swatchAccent: '#FFF0C4',
+    isDark: true,
+    themeColor: '#3E0703',
   },
 ]
 

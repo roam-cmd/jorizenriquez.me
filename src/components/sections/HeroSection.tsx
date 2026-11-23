@@ -30,9 +30,9 @@ const THEME_SHADER_COLORS: Record<
     maxOpacity: 0.5,
   },
   'sage-stone': {
-    bgColor: '#EEEEEE',
-    dotColor: '#777C6D',
-    accentColor: '#2B7A78',
+    bgColor: '#3E0703',
+    dotColor: '#8C1007',
+    accentColor: '#FFF0C4',
     maxOpacity: 0.52,
   },
 }

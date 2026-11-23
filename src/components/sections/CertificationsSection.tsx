@@ -67,19 +67,14 @@ export function CertificationsSection({
       builtPages.push(
         <div
           key={`group-${group.id}`}
-          className={cn(
-            'relative flex size-full flex-col justify-between px-[8cqw] py-[8cqw] text-[var(--fg-primary)]',
-            groupIdx === 0
-              ? 'bg-gradient-to-br from-[var(--bg-elevated)] via-[var(--bg-elevated)]/85 to-[var(--bg-surface)]'
-              : 'bg-[var(--bg-surface)]'
-          )}
+          className="theme-card relative flex size-full flex-col justify-between bg-[var(--bg-surface)] px-[8cqw] py-[8cqw] text-[var(--fg-primary)]"
         >
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono text-[2.8cqw] tracking-[0.2em] text-[var(--accent)] uppercase">
               Chapter {chapterLabel}
             </span>
-            <span className="inline-flex size-[8.5cqw] items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)] text-[var(--accent)]">
-              <GroupIcon className="size-[4.4cqw]" aria-hidden="true" />
+            <span className="inline-flex size-8 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-elevated)] text-[var(--accent)] sm:size-9">
+              <GroupIcon className="size-4" aria-hidden="true" />
             </span>
           </div>
 
@@ -134,7 +129,7 @@ export function CertificationsSection({
         builtPages.push(
           <article
             key={cert.id}
-            className="flex size-full flex-col px-[8cqw] pt-[7.5cqw] pb-[6cqw] text-[var(--fg-primary)]"
+            className="theme-card flex size-full flex-col bg-[var(--bg-surface)] px-[8cqw] pt-[7.5cqw] pb-[6cqw] text-[var(--fg-primary)]"
           >
             <div className="flex items-center justify-between gap-[2cqw]">
               <span className="font-mono text-[2.5cqw] tracking-wider text-[var(--accent)] uppercase">
@@ -154,13 +149,13 @@ export function CertificationsSection({
                   aria-label={`View ${cert.title} certificate`}
                   title={`View ${cert.title} certificate`}
                   onPointerDown={(e) => e.stopPropagation()}
-                  className="inline-flex size-[8.5cqw] shrink-0 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-elevated)] text-[var(--accent)] transition-all duration-150 hover:border-[var(--accent)] hover:bg-[var(--accent-tint)] hover:text-[var(--fg-primary)]"
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-elevated)] text-[var(--accent)] transition-colors duration-150 hover:border-[var(--accent)] hover:bg-[var(--accent-tint)] hover:text-[var(--fg-primary)] sm:size-9"
                 >
-                  <Award className="size-[4.3cqw]" aria-hidden="true" />
+                  <Award className="size-4" aria-hidden="true" />
                 </a>
               ) : (
-                <span className="inline-flex size-[8.5cqw] shrink-0 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-elevated)] text-[var(--accent)]">
-                  <Award className="size-[4.3cqw]" aria-hidden="true" />
+                <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-elevated)] text-[var(--accent)] sm:size-9">
+                  <Award className="size-4" aria-hidden="true" />
                 </span>
               )}
               <div className="min-w-0">

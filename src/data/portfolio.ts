@@ -145,7 +145,7 @@ export const navLinks: NavLinkItem[] = [
 
 export const aboutData: AboutData = {
   paragraphs: [
-    'I’m Joriz Enriquez, a software developer based in City of San Fernando, Pampanga. My primary stack centers on FastAPI, React, and PostgreSQL — pairing strongly typed Python backends and relational data models with responsive TypeScript interfaces.',
+    'I’m Joriz Enriquez, a software developer based in City of San Fernando, Pampanga. My primary stack centers on FastAPI, React, and PostgreSQL, pairing strongly typed Python backends and relational data models with responsive TypeScript interfaces.',
     'Across full-stack web platforms, data analytics, desktop utilities, and Android apps, I enjoy turning complex workflows into clean, dependable tools that are straightforward to deploy and maintain.',
   ],
   focusAreas: [

@@ -125,7 +125,7 @@ export function SkillsSection() {
               code={skillsSnippets.primaryPillars}
               className="mb-8"
             >
-              <div className="grid divide-y divide-[var(--line-subtle)] overflow-hidden rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] md:grid-cols-3 md:divide-x md:divide-y-0">
+              <div className="theme-card grid divide-y divide-[var(--line-subtle)] overflow-hidden rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] md:grid-cols-3 md:divide-x md:divide-y-0">
                 {PRIMARY_PILLARS.map(({ index, name, role, Icon }) => (
                   <div
                     key={name}
@@ -204,7 +204,7 @@ export function SkillsSection() {
             </div>
 
             {/* Structured Engineering Stack Ledger */}
-            <div className="divide-y divide-[var(--line-subtle)] overflow-hidden rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)]">
+            <div className="theme-card divide-y divide-[var(--line-subtle)] overflow-hidden rounded-2xl border border-[var(--line-border)] bg-[var(--bg-surface-translucent)]">
               {visibleCategories.map((category) => {
                 const CategoryIcon = getCategoryIcon(category.id)
                 const originalIndex = skillCategories.findIndex(
