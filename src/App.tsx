@@ -11,11 +11,11 @@ import { PortfolioLoader } from '@/components/ui/PortfolioLoader'
 
 export default function App() {
   return (
-    <div className="relative min-h-screen bg-[var(--bg-base)] text-[var(--fg-primary)]">
+    <div className="relative min-h-screen overflow-x-clip bg-[var(--bg-base)] text-[var(--fg-primary)]">
       <PortfolioLoader />
       <CustomCursor />
       <Navbar />
-      <main id="main-content" className="relative z-10">
+      <main id="main-content" className="relative z-10 overflow-x-clip">
         <HeroSection />
         <AboutSection />
         <SkillsSection />

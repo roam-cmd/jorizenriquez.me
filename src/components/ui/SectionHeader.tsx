@@ -15,15 +15,15 @@ export function SectionHeader({
   description,
 }: SectionHeaderProps) {
   return (
-    <div className="mb-10 max-w-2xl sm:mb-12">
+    <div className="mb-8 max-w-2xl sm:mb-12">
       <p className="font-mono text-xs tracking-widest text-[var(--accent)] uppercase">
         {index} // {eyebrow}
       </p>
-      <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-[var(--fg-primary)] sm:text-4xl">
+      <h2 className="mt-2 font-display text-3xl leading-[1.15] font-bold tracking-tight text-[var(--fg-primary)] sm:text-5xl">
         {title}
       </h2>
       {description && (
-        <p className="mt-3 text-base leading-relaxed text-[var(--fg-muted)]">
+        <p className="mt-2.5 text-sm leading-relaxed text-[var(--fg-muted)] sm:mt-3 sm:text-base">
           {description}
         </p>
       )}

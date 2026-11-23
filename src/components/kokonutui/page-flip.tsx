@@ -3,7 +3,7 @@
 /**
  * @author: @dorianbaffier
  * @description: Page Flip
- * @version: 1.0.0
+ * @version: 1.1.0
  * @date: 2026-10-21
  * @license: MIT
  * @website: https://kokonutui.com
@@ -57,8 +57,13 @@ export interface PageFlipProps {
   className?: string;
 }
 
-/** Below this frame width (px), the book shows one page at a time. */
-const SINGLE_BELOW = 520;
+/** Below this frame width (px) or on mobile viewports (< 768px), show one page at a time. */
+const SINGLE_BELOW = 560;
+const MOBILE_VIEWPORT_BELOW = 768;
+/** Minimum horizontal swipe travel (px) and axis ratio to commit a touch flip. */
+const SWIPE_THRESHOLD_PX = 40;
+const SWIPE_AXIS_RATIO = 1.2;
+const AXIS_LOCK_DISTANCE = 10;
 /** Marks a layer that isn't drawn. */
 const HIDDEN = Symbol("hidden");
 
@@ -69,6 +74,14 @@ interface Layers {
   turning?: ReactNode;
   /** What's printed on the back of the turning page. */
   back?: ReactNode | typeof HIDDEN;
+  /** Whether the static right page is the front cover (page 0). */
+  rightIsCover?: boolean;
+  /** Whether the static left page is the back cover. */
+  leftIsCover?: boolean;
+  /** Whether the actively turning page is the front/back cover. */
+  turningIsCover?: boolean;
+  /** Whether the back of the turning page is a cover face. */
+  backIsCover?: boolean;
 }
 
 /** Two pages open: the cover alone on the right, then pairs. */
@@ -78,10 +91,24 @@ function twoPages(
   dir?: 1 | -1,
   targetOverride?: number
 ): Layers {
-  const leftOf = (s: number) => (s > 0 ? pages[2 * s - 1] : undefined);
-  const rightOf = (s: number) => pages[2 * s];
+  const leftIdx = (s: number) => (s > 0 ? 2 * s - 1 : -1);
+  const rightIdx = (s: number) => 2 * s;
+  const leftOf = (s: number) => {
+    const idx = leftIdx(s);
+    return idx >= 0 ? pages[idx] : undefined;
+  };
+  const rightOf = (s: number) => pages[rightIdx(s)];
+  const isCoverLeft = (s: number) =>
+    leftOf(s) !== undefined && rightOf(s) === undefined;
+  const isCoverRight = (s: number) => s === 0 && rightOf(s) !== undefined;
+
   if (!dir) {
-    return { left: leftOf(spread), right: rightOf(spread) };
+    return {
+      left: leftOf(spread),
+      right: rightOf(spread),
+      leftIsCover: isCoverLeft(spread),
+      rightIsCover: isCoverRight(spread),
+    };
   }
   // While turning, what shows under the page is the target spread's.
   const target = targetOverride ?? spread + dir;
@@ -91,12 +118,20 @@ function twoPages(
         right: rightOf(target),
         turning: rightOf(spread),
         back: leftOf(target),
+        leftIsCover: isCoverLeft(spread),
+        rightIsCover: isCoverRight(target),
+        turningIsCover: isCoverRight(spread),
+        backIsCover: isCoverLeft(target),
       }
     : {
         left: leftOf(target),
         right: rightOf(spread),
         turning: leftOf(spread),
         back: rightOf(target),
+        leftIsCover: isCoverLeft(target),
+        rightIsCover: isCoverRight(spread),
+        turningIsCover: isCoverLeft(spread),
+        backIsCover: isCoverRight(target),
       };
 }
 
@@ -112,13 +147,28 @@ function onePage(
 ): Layers {
   if (dir === 1) {
     const target = targetOverride ?? page + 1;
-    return { right: pages[target], turning: pages[page], back: null };
+    return {
+      right: pages[target],
+      turning: pages[page],
+      back: null,
+      rightIsCover: target === 0,
+      turningIsCover: page === 0,
+      backIsCover: false,
+    };
   }
   if (dir === -1) {
     const target = targetOverride ?? page - 1;
-    return { right: pages[page], back: pages[target] ?? HIDDEN };
+    return {
+      right: pages[page],
+      back: pages[target] ?? HIDDEN,
+      rightIsCover: page === 0,
+      backIsCover: target === 0,
+    };
   }
-  return { right: pages[page] };
+  return {
+    right: pages[page],
+    rightIsCover: page === 0,
+  };
 }
 
 /** How far to slide a closed book so its one page sits in the middle. */
@@ -134,7 +184,7 @@ const PEEK_ZONE = 64;
 /** How far a hovered corner lifts toward the pointer, at most (px). */
 const PEEK_MAX = 34;
 /** Pointer travel that turns a press into a drag (px). */
-const DRAG_SLOP = 4;
+const DRAG_SLOP = 6;
 const TURN = { duration: 0.6, ease: [0.32, 0.72, 0, 1] } as const;
 const SETTLE = { duration: 0.32, ease: [0.23, 1, 0.32, 1] } as const;
 
@@ -215,15 +265,31 @@ function foldStyles(turn: Turn, w: number, h: number) {
   // The flap element sits at the page's spot; CSS moves it from there.
   const e = a * x0 + bx - x0;
   const f = bc * x0 + by;
+  const progress = Math.min(1, l / (2 * w));
   return {
-    front: { clipPath: polygon(front, x0) } satisfies CSSProperties,
+    front: {
+      clipPath: polygon(front, x0),
+      backfaceVisibility: "hidden",
+    } satisfies CSSProperties,
     flap: {
       clipPath: polygon(flap, x0),
       transform: `matrix(${a}, ${bc}, ${bc}, ${dd}, ${e}, ${f})`,
+      backfaceVisibility: "hidden",
     } satisfies CSSProperties,
     /** How far through the turn, for the shadow. */
-    progress: Math.min(1, l / (2 * w)),
+    progress,
   };
+}
+
+interface PressState {
+  start: Pt;
+  clientStart: Pt;
+  pointerId: number;
+  pointerType: string;
+  axis: "undecided" | "horizontal" | "vertical";
+  dir: 1 | -1;
+  dragging: boolean;
+  back?: boolean;
 }
 
 export default function PageFlip({
@@ -238,7 +304,7 @@ export default function PageFlip({
   const [size, setSize] = useState({ w: 0, h: 0 });
   const sizeRef = useRef({ w: 0, h: 0 });
   const frameRef = useRef<HTMLDivElement>(null);
-  /** Narrow frames show one page at a time; the spine sits off to the left. */
+  /** Narrow frames or mobile screens (< 768px) show one page at a time. */
   const [single, setSingle] = useState(false);
   const singleRef = useRef(false);
   // The spread on two pages, or the page on one.
@@ -251,11 +317,7 @@ export default function PageFlip({
   /** The spread a committed turn is heading for, so the book recenters with it. */
   const [heading, setHeading] = useState<number | null>(null);
   const turnRef = useRef<Turn | null>(null);
-  const pressRef = useRef<{
-    start: Pt;
-    dragging: boolean;
-    back?: boolean;
-  } | null>(null);
+  const pressRef = useRef<PressState | null>(null);
   const animRef = useRef<ReturnType<typeof animate> | null>(null);
   const playingRef = useRef(false);
   /** A turn that will finish on its own: presses wait for it. */
@@ -283,12 +345,19 @@ export default function PageFlip({
       return;
     }
     const measure = () => {
-      const narrow = frame.clientWidth < SINGLE_BELOW;
+      const viewportNarrow =
+        typeof window !== "undefined" &&
+        window.innerWidth < MOBILE_VIEWPORT_BELOW;
+      const narrow = viewportNarrow || frame.clientWidth < SINGLE_BELOW;
       if (narrow !== singleRef.current) {
         singleRef.current = narrow;
         setSingle(narrow);
-        // Keep the same page in view when the layout changes.
-        setSpread((s) => (narrow ? Math.max(0, 2 * s - 1) : Math.ceil(s / 2)));
+        setSpread((s) => {
+          const next = narrow ? Math.max(0, 2 * s - 1) : Math.ceil(s / 2);
+          spreadRef.current = next;
+          onSpreadChangeRef.current?.(next, narrow);
+          return next;
+        });
       }
       setSize({ w: book.clientWidth / 2, h: book.clientHeight });
     };
@@ -296,7 +365,11 @@ export default function PageFlip({
     const observer = new ResizeObserver(measure);
     observer.observe(frame);
     observer.observe(book);
-    return () => observer.disconnect();
+    window.addEventListener("resize", measure, { passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   useEffect(() => () => animRef.current?.stop(), []);
@@ -328,41 +401,44 @@ export default function PageFlip({
   });
 
   /** Runs the corner from where it is to `to`, lifting it on the way over. */
-  const run = useCallback((from: Turn, to: Pt, complete: boolean) => {
-    animRef.current?.stop();
-    playingRef.current = false;
-    const { w: bookW, h: bookH } = sizeRef.current;
-    const start = from.at;
-    const lift = complete ? bookH * 0.14 * (from.corner.y === 0 ? 1 : -1) : 0;
-    committingRef.current = complete;
-    const next = from.target ?? spreadRef.current + from.dir;
-    if (complete) {
-      setHeading(next);
-    }
-    playingRef.current = true;
-    animRef.current = animate(0, 1, {
-      ...(complete ? TURN : SETTLE),
-      onUpdate: (t) => {
-        const p = lerp(start, to, t);
-        setAt({
-          ...from,
-          at: { x: p.x, y: p.y + Math.sin(Math.PI * t) * lift },
-        });
-      },
-      onComplete: () => {
-        playingRef.current = false;
-        committingRef.current = false;
-        setAt(null);
-        setHeading(null);
-        if (complete) {
-          spreadRef.current = next;
-          setSpread(next);
-          onSpreadChangeRef.current?.(next, singleRef.current);
-        }
-      },
-    });
-    void bookW;
-  }, [setAt]);
+  const run = useCallback(
+    (from: Turn, to: Pt, complete: boolean) => {
+      animRef.current?.stop();
+      playingRef.current = false;
+      const { w: bookW, h: bookH } = sizeRef.current;
+      const start = from.at;
+      const lift = complete ? bookH * 0.14 * (from.corner.y === 0 ? 1 : -1) : 0;
+      committingRef.current = complete;
+      const next = from.target ?? spreadRef.current + from.dir;
+      if (complete) {
+        setHeading(next);
+      }
+      playingRef.current = true;
+      animRef.current = animate(0, 1, {
+        ...(complete ? TURN : SETTLE),
+        onUpdate: (t) => {
+          const p = lerp(start, to, t);
+          setAt({
+            ...from,
+            at: { x: p.x, y: p.y + Math.sin(Math.PI * t) * lift },
+          });
+        },
+        onComplete: () => {
+          playingRef.current = false;
+          committingRef.current = false;
+          setAt(null);
+          setHeading(null);
+          if (complete) {
+            spreadRef.current = next;
+            setSpread(next);
+            onSpreadChangeRef.current?.(next, singleRef.current);
+          }
+        },
+      });
+      void bookW;
+    },
+    [setAt]
+  );
 
   useImperativeHandle(
     ref,
@@ -411,8 +487,10 @@ export default function PageFlip({
       return;
     }
     if (reduceMotion) {
-      setSpread(spread + dir);
-      onSpreadChangeRef.current?.(spread + dir, singleRef.current);
+      const next = spread + dir;
+      spreadRef.current = next;
+      setSpread(next);
+      onSpreadChangeRef.current?.(next, singleRef.current);
       return;
     }
     const corner = cornerFor(dir, size.h);
@@ -442,22 +520,46 @@ export default function PageFlip({
       return;
     }
     const p = local(event);
-    // On one page, its left edge goes back and the rest turns forward.
-    const backZone = single && p.x < size.w * 1.3;
+    const clientStart = { x: event.clientX, y: event.clientY };
+    // On one page, its left third goes back and the rest turns forward.
+    const backZone = single && p.x < size.w * 1.32;
     const dir: 1 | -1 = p.x >= size.w && !backZone ? 1 : -1;
+
+    // For touch/pen, wait for axis lock before capturing pointer or starting turn
+    if (event.pointerType !== "mouse") {
+      pressRef.current = {
+        start: p,
+        clientStart,
+        pointerId: event.pointerId,
+        pointerType: event.pointerType,
+        axis: "undecided",
+        dir,
+        dragging: false,
+        back: single && dir === -1,
+      };
+      return;
+    }
+
     if (!canTurn(dir)) {
       return;
     }
     if (reduceMotion) {
-      // No corner to drag: a press turns the page in place.
       go(dir);
       return;
     }
     stop();
     event.currentTarget.setPointerCapture(event.pointerId);
-    pressRef.current = { start: p, dragging: false };
+    pressRef.current = {
+      start: p,
+      clientStart,
+      pointerId: event.pointerId,
+      pointerType: event.pointerType,
+      axis: "horizontal",
+      dir,
+      dragging: false,
+      back: single && dir === -1,
+    };
     if (single && dir === -1) {
-      pressRef.current = { start: p, dragging: false, back: true };
       return;
     }
     const current = turnRef.current;
@@ -497,6 +599,56 @@ export default function PageFlip({
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const p = local(event);
     const press = pressRef.current;
+
+    if (press && press.pointerType !== "mouse") {
+      const dx = event.clientX - press.clientStart.x;
+      const dy = event.clientY - press.clientStart.y;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (press.axis === "undecided") {
+        if (absDy > AXIS_LOCK_DISTANCE && absDy >= absDx) {
+          // Vertical scroll gesture: cancel page flip immediately
+          pressRef.current = null;
+          if (turnRef.current) {
+            setAt(null);
+          }
+          return;
+        }
+        if (absDx > absDy * SWIPE_AXIS_RATIO && absDx > AXIS_LOCK_DISTANCE) {
+          press.axis = "horizontal";
+          // Swipe direction overrides initial tap zone: swipe left = next (1), swipe right = prev (-1)
+          const swipeDir: 1 | -1 = dx < 0 ? 1 : -1;
+          if (!canTurn(swipeDir)) {
+            pressRef.current = null;
+            return;
+          }
+          press.dir = swipeDir;
+          press.back = single && swipeDir === -1;
+          press.dragging = true;
+          stop();
+          try {
+            event.currentTarget.setPointerCapture(event.pointerId);
+          } catch {
+            // Pointer capture may fail if browser already started pan-y
+          }
+          if (!press.back && !reduceMotion) {
+            const corner = cornerFor(swipeDir, p.y);
+            setAt({ dir: swipeDir, corner, at: reach(p, corner) });
+          }
+        }
+        return;
+      }
+
+      if (press.axis === "horizontal" && !press.back && turnRef.current) {
+        setAt({
+          ...turnRef.current,
+          at: reach(p, turnRef.current.corner),
+        });
+      }
+      return;
+    }
+
     const current = turnRef.current;
     if (press?.back) {
       press.dragging ||= len(sub(p, press.start)) >= DRAG_SLOP;
@@ -515,22 +667,66 @@ export default function PageFlip({
     }
   };
 
-  const onPointerUp = () => {
+  const onPointerUp = (event: PointerEvent<HTMLDivElement>) => {
     const press = pressRef.current;
     const current = turnRef.current;
     pressRef.current = null;
-    if (press?.back) {
+
+    if (!press) {
+      return;
+    }
+
+    if (press.pointerType !== "mouse") {
+      const dx = event.clientX - press.clientStart.x;
+      const dy = event.clientY - press.clientStart.y;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+      const isSwipe =
+        press.axis === "horizontal" &&
+        absDx > absDy * SWIPE_AXIS_RATIO &&
+        absDx > SWIPE_THRESHOLD_PX;
+      const isCleanTap =
+        press.axis === "undecided" && Math.hypot(dx, dy) < AXIS_LOCK_DISTANCE;
+
+      if (press.back) {
+        if (isSwipe || (isCleanTap && canTurn(press.dir))) {
+          go(press.dir);
+        }
+        return;
+      }
+
+      if (current) {
+        const crossed =
+          current.dir === 1 ? current.at.x < size.w : current.at.x > size.w;
+        const complete = isSwipe || crossed;
+        run(
+          current,
+          complete
+            ? {
+                x: current.corner.x - current.dir * 2 * size.w,
+                y: current.corner.y,
+              }
+            : current.corner,
+          complete
+        );
+        return;
+      }
+
+      if (isCleanTap && canTurn(press.dir)) {
+        go(press.dir);
+      }
+      return;
+    }
+
+    if (press.back) {
       if (!press.dragging) {
         go(-1);
       }
       return;
     }
-    // Only a press that started on the page turns it: a release after a
-    // right click, or a press that began outside, leaves a peek to settle.
-    if (!(press && current)) {
+    if (!current) {
       return;
     }
-    // A tap turns the page; a drag turns it once the corner crosses the spine.
     const crossed =
       current.dir === 1 ? current.at.x < size.w : current.at.x > size.w;
     const complete = press.dragging ? crossed : true;
@@ -544,6 +740,14 @@ export default function PageFlip({
         : current.corner,
       complete
     );
+  };
+
+  const onPointerCancel = () => {
+    pressRef.current = null;
+    const current = turnRef.current;
+    if (current && !playingRef.current) {
+      run(current, current.corner, false);
+    }
   };
 
   const onPointerLeave = () => {
@@ -561,80 +765,148 @@ export default function PageFlip({
   };
 
   const fold = turn && size.w ? foldStyles(turn, size.w, size.h) : null;
-  const { left, right, turning, back } = single
+  const activeLayers = single
     ? onePage(pages, spread, turn?.dir, turn?.target)
     : twoPages(pages, spread, turn?.dir, turn?.target);
+  const {
+    left,
+    right,
+    turning,
+    back,
+    leftIsCover,
+    rightIsCover,
+    turningIsCover,
+    backIsCover,
+  } = activeLayers;
   // A closed book sits centered: the cover alone, or the back alone.
   const shift = single ? 0 : centerShift(twoPages(pages, heading ?? spread));
   const first = single ? spread + 1 : Math.max(1, 2 * spread);
   const last = single ? spread + 1 : Math.min(pages.length, 2 * spread + 1);
+  const turnProgress = fold?.progress ?? 0;
 
   return (
     <div
       className={cn(
-        "flex w-full max-w-2xl flex-col items-center overflow-x-clip",
+        "flex w-full max-w-2xl flex-col items-center overflow-x-clip touch-pan-y",
+        single && "mx-auto max-w-[360px] sm:max-w-[420px]",
         className
       )}
       ref={frameRef}
+      style={{ touchAction: "pan-y" }}
     >
       <div
         className={cn(
-          "shrink-0 rounded-sm motion-reduce:transition-none",
+          "relative shrink-0 rounded-md motion-reduce:transition-none",
           single
-            ? "w-[200%] self-start"
-            : "w-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+            ? "w-[200%] self-start shadow-[0_20px_42px_-14px_rgba(0,0,0,0.58)]"
+            : "w-full shadow-[0_24px_48px_-14px_rgba(0,0,0,0.62)] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
         )}
         style={{ transform: `translateX(${single ? -50 : shift * 100}%)` }}
       >
         <div
-          className="relative aspect-[3/2] w-full touch-none select-none"
-          onPointerCancel={onPointerUp}
+          className="relative aspect-[3/2] w-full touch-pan-y select-none"
+          onPointerCancel={onPointerCancel}
           onPointerDown={onPointerDown}
           onPointerLeave={onPointerLeave}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           ref={bookRef}
+          style={{ touchAction: "pan-y" }}
         >
-          {left !== undefined && <Paper side="left">{left}</Paper>}
-          {right !== undefined && <Paper side="right">{right}</Paper>}
+          {left !== undefined && (
+            <Paper
+              isCover={leftIsCover}
+              side="left"
+              turnProgress={turnProgress}
+            >
+              {left}
+            </Paper>
+          )}
+          {right !== undefined && (
+            <Paper
+              isCover={rightIsCover}
+              side="right"
+              turnProgress={turnProgress}
+            >
+              {right}
+            </Paper>
+          )}
           {turn && fold && turning !== undefined && (
-            <Paper side={turn.dir === 1 ? "right" : "left"} style={fold.front}>
+            <Paper
+              isCover={turningIsCover}
+              side={turn.dir === 1 ? "right" : "left"}
+              style={fold.front}
+              turnProgress={turnProgress}
+            >
               {turning}
             </Paper>
           )}
           {turn && !fold && turning !== undefined && (
-            <Paper side={turn.dir === 1 ? "right" : "left"}>{turning}</Paper>
+            <Paper
+              isCover={turningIsCover}
+              side={turn.dir === 1 ? "right" : "left"}
+              turnProgress={turnProgress}
+            >
+              {turning}
+            </Paper>
           )}
           {turn && fold && back !== undefined && back !== HIDDEN && (
             // The shadow sits on a wrapper: a clip on the same element would cut it off.
             <div
               className="pointer-events-none absolute inset-0"
               style={{
-                filter: `drop-shadow(0 ${2 + fold.progress * 6}px ${6 + fold.progress * 10}px rgb(0 0 0 / ${0.12 + (1 - fold.progress) * 0.1}))`,
+                filter: `drop-shadow(0 ${2 + fold.progress * 8}px ${8 + fold.progress * 12}px rgb(0 0 0 / ${0.18 + Math.sin(Math.PI * fold.progress) * 0.22}))`,
               }}
             >
               <Paper
                 back
+                isCover={backIsCover}
                 side={turn.dir === 1 ? "right" : "left"}
                 style={fold.flap}
+                turnProgress={turnProgress}
               >
                 {back}
               </Paper>
             </div>
           )}
+
+          {/* Subtle mobile edge tap zones for effortless one-tap page turns */}
+          {single && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-1/2 flex w-1/2 justify-between"
+            >
+              <span
+                className={cn(
+                  "h-full w-8 bg-gradient-to-r from-white/[0.02] to-transparent",
+                  spread === 0 && "opacity-0"
+                )}
+              />
+              <span
+                className={cn(
+                  "h-full w-8 bg-gradient-to-l from-white/[0.02] to-transparent",
+                  spread === spreads - 1 && "opacity-0"
+                )}
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="mt-5 flex items-center gap-3 font-mono text-xs text-[var(--fg-muted)]">
+      <div className="mt-5 flex w-full items-center justify-center gap-3 font-mono text-xs text-[var(--fg-muted)]">
         <NavButton
           disabled={spread === 0}
           label="Previous page"
           onClick={() => go(-1)}
           onKeyDown={onKeyDown}
+          text="Prev"
         >
           <path d="M10 4 6 8l4 4" />
         </NavButton>
-        <span aria-live="polite" className="min-w-24 text-center tabular-nums">
+        <span
+          aria-live="polite"
+          className="min-w-24 text-center text-xs tabular-nums"
+        >
           {first === last ? `${first}` : `${first}–${last}`} of {pages.length}
         </span>
         <NavButton
@@ -642,6 +914,8 @@ export default function PageFlip({
           label="Next page"
           onClick={() => go(1)}
           onKeyDown={onKeyDown}
+          text="Next"
+          trailingIcon
         >
           <path d="m6 4 4 4-4 4" />
         </NavButton>
@@ -653,39 +927,75 @@ export default function PageFlip({
 function Paper({
   side,
   back = false,
+  isCover = false,
+  turnProgress = 0,
   style,
   children,
 }: {
   side: "left" | "right";
   back?: boolean;
+  isCover?: boolean;
+  turnProgress?: number;
   style?: CSSProperties;
   children: ReactNode;
 }) {
+  // Deepen the inner spine shadow naturally as the page rotates through 45°–90°
+  const midTurnAngle = Math.sin(Math.PI * turnProgress);
+  const spineShadowOpacity = Math.min(0.68, 0.32 + midTurnAngle * 0.28);
+
   return (
     <div
       className={cn(
         "@container absolute top-0 h-full w-1/2 origin-top-left overflow-hidden text-[var(--fg-primary)]",
-        // The back of a sheet is a shade deeper, so a fold reads as paper.
-        back ? "bg-[var(--bg-elevated)]" : "bg-[var(--bg-surface)]",
-        side === "left"
-          ? "left-0 rounded-l-sm shadow-[inset_-1px_0_0_rgb(0_0_0/0.06)]"
-          : "left-1/2 rounded-r-sm shadow-[inset_1px_0_0_rgb(0_0_0/0.06)]",
+        isCover
+          ? "bg-[var(--bg-elevated)] shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_1px_0_0_rgba(255,255,255,0.08)]"
+          : back
+            ? "bg-[var(--bg-elevated)]/95"
+            : "bg-[var(--bg-surface)]",
+        side === "left" ? "left-0 rounded-l-md" : "left-1/2 rounded-r-md",
         "ring-1 ring-[var(--line-border)]"
       )}
-      style={style}
+      style={{
+        backfaceVisibility: "hidden",
+        ...style,
+      }}
     >
       {/* The back of a page reads the right way round once it's folded over. */}
-      <div className={cn("size-full", back && "-scale-x-100")}>
+      <div
+        className={cn("relative size-full", back && "-scale-x-100")}
+        style={{ backfaceVisibility: "hidden" }}
+      >
         <div className="size-full">{children}</div>
-      </div>
-      {/* The gutter: paper curving into the spine. */}
-      <span
-        aria-hidden="true"
-        className={cn(
-          "pointer-events-none absolute inset-y-0 w-[8%] from-black/[0.12] to-transparent dark:from-black/45",
-          side === "left" ? "right-0 bg-linear-to-l" : "left-0 bg-linear-to-r"
+
+        {/* Cover lighting: subtle outer bevel & top-left ambient sheen, NO inner gutter crease */}
+        {isCover ? (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.025) 38%, transparent 68%, rgba(0, 0, 0, 0.16) 100%)",
+            }}
+          />
+        ) : (
+          /* Inner page lighting: matte surface + spine/gutter shadow anchored strictly to binding edge */
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute inset-y-0 w-[12%]",
+              /* Inside the un-mirrored container, when `back` is true, a right page has flipped to the left so its binding edge is now on the right (`right-0`), and a left page flipped to the right has its binding edge on the left (`left-0`). */
+              (back ? side === "right" : side === "left")
+                ? "right-0"
+                : "left-0"
+            )}
+            style={{
+              background: (back ? side === "right" : side === "left")
+                ? `linear-gradient(to left, rgba(0, 0, 0, ${spineShadowOpacity.toFixed(3)}) 0%, rgba(0, 0, 0, ${(spineShadowOpacity * 0.38).toFixed(3)}) 45%, transparent 100%)`
+                : `linear-gradient(to right, rgba(0, 0, 0, ${spineShadowOpacity.toFixed(3)}) 0%, rgba(0, 0, 0, ${(spineShadowOpacity * 0.38).toFixed(3)}) 45%, transparent 100%)`,
+            }}
+          />
         )}
-      />
+      </div>
     </div>
   );
 }
@@ -693,40 +1003,58 @@ function Paper({
 function NavButton({
   children,
   label,
+  text,
+  trailingIcon = false,
   disabled,
   onClick,
   onKeyDown,
 }: {
   children: ReactNode;
   label: string;
+  text: string;
+  trailingIcon?: boolean;
   disabled: boolean;
   onClick: () => void;
   onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => void;
 }) {
   return (
     <button
-      // aria-disabled, not disabled: the last press keeps focus on the button,
-      // so the arrow keys keep working.
       aria-disabled={disabled || undefined}
       aria-label={label}
-      className="flex size-8 items-center justify-center rounded-full text-[var(--fg-muted)] ring-1 ring-[var(--line-border)] transition-colors duration-150 ease-out hover:bg-[var(--bg-elevated)] hover:text-[var(--fg-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--accent)] aria-disabled:cursor-default aria-disabled:opacity-35 aria-disabled:hover:bg-transparent aria-disabled:hover:text-[var(--fg-muted)]"
+      className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full bg-[var(--bg-surface)]/90 px-4 py-2 font-mono text-xs text-[var(--fg-muted)] ring-1 ring-[var(--line-border)] transition-colors duration-150 ease-out hover:bg-[var(--bg-elevated)] hover:text-[var(--fg-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[var(--accent)] aria-disabled:cursor-default aria-disabled:opacity-35 aria-disabled:hover:bg-[var(--bg-surface)]/90 aria-disabled:hover:text-[var(--fg-muted)] sm:min-h-[38px] sm:px-3.5"
       onClick={disabled ? undefined : onClick}
       onKeyDown={onKeyDown}
       type="button"
     >
-      <svg
-        aria-hidden="true"
-        className="size-4"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        viewBox="0 0 16 16"
-      >
-        {children}
-      </svg>
+      {!trailingIcon && (
+        <svg
+          aria-hidden="true"
+          className="size-4 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          viewBox="0 0 16 16"
+        >
+          {children}
+        </svg>
+      )}
+      <span>{text}</span>
+      {trailingIcon && (
+        <svg
+          aria-hidden="true"
+          className="size-4 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          viewBox="0 0 16 16"
+        >
+          {children}
+        </svg>
+      )}
     </button>
   );
 }
-

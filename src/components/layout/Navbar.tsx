@@ -74,7 +74,7 @@ export function Navbar() {
         typingMs={580}
         showToggle={false}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5 sm:px-8">
           <CodeRevealItem code={navSnippets.brand} inline>
             <a
               href="#top"
@@ -133,7 +133,7 @@ export function Navbar() {
                 aria-label={
                   mobileOpen ? 'Close navigation menu' : 'Open navigation menu'
                 }
-                className="inline-flex items-center justify-center rounded-lg border border-[var(--line-border)] p-2 text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[var(--line-border)] p-2 text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 {mobileOpen ? (
                   <X className="h-5 w-5" aria-hidden="true" />
@@ -150,7 +150,7 @@ export function Navbar() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile navigation"
-          className="border-t border-[var(--line-subtle)] bg-[var(--bg-base)] px-4 py-4 md:hidden"
+          className="border-t border-[var(--line-subtle)] bg-[var(--bg-base)] px-5 py-4 md:hidden"
         >
           <ul className="flex flex-col gap-1">
             {navLinks.map((link) => (
@@ -159,7 +159,7 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    'block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    'flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                     activeId === link.id
                       ? 'bg-[var(--bg-elevated)] text-[var(--fg-primary)]'
                       : 'text-[var(--fg-muted)] hover:bg-[var(--bg-surface)] hover:text-[var(--fg-primary)]'

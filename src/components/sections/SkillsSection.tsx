@@ -89,20 +89,20 @@ export function SkillsSection() {
     <section
       id="skills"
       aria-labelledby="skills-heading"
-      className="border-t border-[var(--line-subtle)]"
+      className="overflow-x-clip border-t border-[var(--line-subtle)]"
     >
       <RevealSection
         label="SkillsSection"
-        toggleOffsetClassName="top-6 right-4 sm:right-6"
+        toggleOffsetClassName="top-6 right-5 sm:right-8"
       >
         <TopoBackground
-          className="min-h-0 bg-transparent py-20 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] sm:py-24"
+          className="min-h-0 bg-transparent py-16 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] md:py-24"
           interval={0.14}
           speed={0.45}
           seed={14}
           labels={false}
         >
-          <div className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6">
+          <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
             <div id="skills-heading">
               <CodeRevealItem
                 code={sectionHeaderCode(
@@ -167,7 +167,7 @@ export function SkillsSection() {
                   onClick={() => setActiveLayer('all')}
                   aria-pressed={activeLayer === 'all'}
                   className={cn(
-                    'rounded-full border px-3.5 py-1.5 font-mono text-xs transition-colors',
+                    'inline-flex min-h-[40px] items-center rounded-full border px-3.5 py-1.5 font-mono text-xs transition-colors sm:min-h-[34px]',
                     activeLayer === 'all'
                       ? 'border-[var(--accent)] bg-[var(--accent)] font-semibold text-[var(--accent-fg)]'
                       : 'border-[var(--line-border)] bg-[var(--bg-surface-translucent)] text-[var(--fg-muted)] hover:border-[var(--accent)] hover:text-[var(--fg-primary)]'
@@ -190,7 +190,7 @@ export function SkillsSection() {
                       onClick={() => setActiveLayer(category.id)}
                       aria-pressed={isActive}
                       className={cn(
-                        'rounded-full border px-3.5 py-1.5 font-mono text-xs transition-colors',
+                        'inline-flex min-h-[40px] items-center rounded-full border px-3.5 py-1.5 font-mono text-xs transition-colors sm:min-h-[34px]',
                         isActive
                           ? 'border-[var(--accent)] bg-[var(--accent)] font-semibold text-[var(--accent-fg)]'
                           : 'border-[var(--line-border)] bg-[var(--bg-surface-translucent)] text-[var(--fg-muted)] hover:border-[var(--accent)] hover:text-[var(--fg-primary)]'

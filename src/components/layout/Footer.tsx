@@ -15,9 +15,9 @@ const CURRENT_YEAR = new Date().getFullYear()
  */
 export function Footer() {
   return (
-    <footer className="relative z-10 border-t border-[var(--line-subtle)] bg-[var(--bg-footer)] py-10">
+    <footer className="relative z-10 overflow-x-clip border-t border-[var(--line-subtle)] bg-[var(--bg-footer)] py-10">
       <RevealSection label="Footer" showToggle={false} typingMs={620}>
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between">
           <CodeRevealItem code={footerSnippets.brand}>
             <div>
               <p className="font-display text-sm font-semibold text-[var(--fg-primary)] transition-colors duration-300 ease-out hover:text-[var(--name-hover)]">

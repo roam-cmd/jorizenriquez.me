@@ -95,7 +95,7 @@ export function HeroSection() {
     <section
       id="top"
       aria-label="Introduction"
-      className="relative -mt-16 overflow-hidden pt-16"
+      className="relative -mt-16 overflow-hidden overflow-x-clip pt-16"
     >
       <div
         className={cn('relative', isShaking && 'animate-hero-chomp-shake')}
@@ -124,7 +124,7 @@ export function HeroSection() {
         toggleOffsetClassName="top-5 right-5 sm:top-6 sm:right-8"
       >
         <div className="relative flex min-h-[88svh] w-full items-center justify-center">
-          <div className="relative z-10 mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 sm:py-28">
+          <div className="relative z-10 mx-auto w-full max-w-5xl px-5 py-16 sm:px-8 md:py-24">
             <div className="max-w-3xl">
               <CodeRevealItem code={heroSnippets.badge} inline>
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-3.5 py-1.5">
@@ -138,33 +138,33 @@ export function HeroSection() {
                 </div>
               </CodeRevealItem>
 
-              <CodeRevealItem code={heroSnippets.heading} className="mt-6">
+              <CodeRevealItem code={heroSnippets.heading} className="mt-5 sm:mt-6">
                 <div>
-                  <h1 className="inline-block font-display text-4xl font-bold tracking-tight text-[var(--fg-primary)] transition-colors duration-300 ease-out hover:text-[var(--name-hover)] sm:text-6xl">
+                  <h1 className="inline-block font-display text-3xl leading-[1.12] font-bold tracking-tight text-[var(--fg-primary)] transition-colors duration-300 ease-out hover:text-[var(--name-hover)] sm:text-5xl md:text-6xl">
                     {siteProfile.displayName}
                   </h1>
-                  <p className="mt-3 font-mono text-sm tracking-wide text-[var(--accent)] sm:text-base">
+                  <p className="mt-2.5 font-mono text-xs tracking-wide text-[var(--accent)] sm:mt-3 sm:text-base">
                     {siteProfile.roleTitle}
                   </p>
                 </div>
               </CodeRevealItem>
 
-              <CodeRevealItem code={heroSnippets.intro} className="mt-5">
+              <CodeRevealItem code={heroSnippets.intro} className="mt-4 sm:mt-5">
                 <div>
-                  <p className="max-w-2xl text-lg leading-relaxed text-[var(--fg-primary)] sm:text-xl">
+                  <p className="max-w-2xl text-base leading-relaxed text-[var(--fg-primary)] sm:text-xl">
                     {siteProfile.headline}
                   </p>
-                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--fg-muted)]">
+                  <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-[var(--fg-muted)] sm:mt-3 sm:text-base">
                     {siteProfile.tagline}
                   </p>
                 </div>
               </CodeRevealItem>
 
-              <div className="mt-8 flex flex-wrap items-center gap-3.5">
+              <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-3.5">
                 <CodeRevealItem code={heroSnippets.primaryCta} inline>
                   <a
                     href="#projects"
-                    className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)]"
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)]"
                   >
                     <span>Explore Projects</span>
                     <ArrowDownRight className="h-4 w-4" aria-hidden="true" />
@@ -174,7 +174,7 @@ export function HeroSection() {
                 <CodeRevealItem code={heroSnippets.secondaryCta} inline>
                   <a
                     href="#contact"
-                    className="inline-flex items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-5 py-3 text-sm font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-5 py-3 text-sm font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
                   >
                     <span>Contact Me</span>
                   </a>
@@ -185,7 +185,7 @@ export function HeroSection() {
                     href={siteProfile.cvUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-5 py-3 text-sm font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-5 py-3 text-sm font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
                   >
                     <FileText
                       className="h-4 w-4 text-[var(--accent)]"
@@ -196,7 +196,7 @@ export function HeroSection() {
                 </CodeRevealItem>
               </div>
 
-              <div className="mt-10 flex flex-wrap items-center gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-2.5 sm:mt-10 sm:gap-3">
                 {siteProfile.socials.map((social) => (
                   <CodeRevealItem
                     key={social.label}
@@ -214,7 +214,7 @@ export function HeroSection() {
                       rel={
                         social.platform === 'email' ? undefined : 'noreferrer'
                       }
-                      className="inline-flex items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-3 py-2 text-xs font-medium text-[var(--fg-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)]"
+                      className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface)]/95 px-3.5 py-2 text-xs font-medium text-[var(--fg-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)] sm:min-h-[38px]"
                     >
                       <SocialIcon
                         platform={social.platform}

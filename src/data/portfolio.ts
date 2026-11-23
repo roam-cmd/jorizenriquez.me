@@ -447,7 +447,6 @@ export const experienceItems: ExperienceItem[] = [
     summary:
       'Undergraduate Computer Science student with consistent academic distinction (Dean’s List 2023 – 2026).',
     highlights: [
-      'Dean’s List 2023 – 2026',
       'Relevant Coursework: Algorithms, Web Development, Object-Oriented Programming, Networking, Android Development, Data Analytics',
     ],
   },

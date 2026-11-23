@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import {
   type KeyboardEvent,
+  type TouchEvent,
   type TransitionEvent,
   useEffect,
   useMemo,
@@ -48,6 +49,13 @@ export function ProjectsSection() {
     typeof window === 'undefined' ? 3 : getVisibleCount(window.innerWidth)
   )
   const carouselRef = useRef<HTMLDivElement>(null)
+  const touchStateRef = useRef<{
+    startX: number
+    startY: number
+    dx: number
+    dy: number
+    axis: 'undecided' | 'horizontal' | 'vertical'
+  } | null>(null)
   const [hasEnteredView, setHasEnteredView] = useState(false)
   const [navigationCount, setNavigationCount] = useState(0)
   const [trackPos, setTrackPos] = useState(projects.length)
@@ -148,6 +156,62 @@ export function ProjectsSection() {
     }
   }
 
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (event.touches.length !== 1) {
+      touchStateRef.current = null
+      return
+    }
+    const touch = event.touches[0]
+    touchStateRef.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      dx: 0,
+      dy: 0,
+      axis: 'undecided',
+    }
+  }
+
+  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    const state = touchStateRef.current
+    if (!state || event.touches.length !== 1) {
+      return
+    }
+    const touch = event.touches[0]
+    state.dx = touch.clientX - state.startX
+    state.dy = touch.clientY - state.startY
+    const absDx = Math.abs(state.dx)
+    const absDy = Math.abs(state.dy)
+
+    if (state.axis === 'undecided') {
+      if (absDy > 10 && absDy >= absDx) {
+        state.axis = 'vertical'
+      } else if (absDx > absDy * 1.2 && absDx > 10) {
+        state.axis = 'horizontal'
+      }
+    }
+  }
+
+  const handleTouchEnd = () => {
+    const state = touchStateRef.current
+    touchStateRef.current = null
+    if (!state || state.axis !== 'horizontal') {
+      return
+    }
+    const absDx = Math.abs(state.dx)
+    const absDy = Math.abs(state.dy)
+    if (absDx > absDy * 1.2 && absDx > 40) {
+      if (state.dx < 0) {
+        handleNext()
+      } else {
+        handlePrev()
+      }
+    }
+  }
+
+  const handleTouchCancel = () => {
+    touchStateRef.current = null
+  }
+
   const activeNum = String(activeProjectIndex + 1).padStart(2, '0')
   const totalCount = String(totalProjects).padStart(2, '0')
 
@@ -155,25 +219,25 @@ export function ProjectsSection() {
     <section
       id="projects"
       aria-labelledby="projects-heading"
-      className="border-t border-[var(--line-subtle)]"
+      className="overflow-x-clip border-t border-[var(--line-subtle)]"
     >
       <RevealSection
         label="ProjectsSection"
         revealAllOnEnter
-        toggleOffsetClassName="top-6 right-4 sm:right-6"
+        toggleOffsetClassName="top-6 right-5 sm:right-8"
       >
         <TopoBackground
-          className="min-h-0 bg-transparent py-20 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] sm:py-24"
+          className="min-h-0 bg-transparent py-16 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] md:py-24"
           interval={0.14}
           speed={0.45}
           seed={21}
           labels={false}
         >
           <div
-            className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6"
+            className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8"
             onKeyDown={handleKeyDown}
           >
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end sm:gap-4">
               <div id="projects-heading">
                 <CodeRevealItem
                   code={sectionHeaderCode(
@@ -195,9 +259,9 @@ export function ProjectsSection() {
               <CodeRevealItem
                 code={projectsSnippets.controls}
                 inline
-                className="mb-10 self-start sm:mb-12 sm:self-end"
+                className="mb-6 w-full self-start sm:mb-12 sm:w-auto sm:self-end"
               >
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:w-auto sm:justify-end">
                   <span className="font-mono text-xs text-[var(--fg-muted)] tabular-nums">
                     {activeNum} / {totalCount}
                   </span>
@@ -207,7 +271,7 @@ export function ProjectsSection() {
                       type="button"
                       onClick={handlePrev}
                       aria-label="Previous project"
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[var(--line-border)] bg-[var(--bg-surface-translucent)] text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] sm:min-h-[38px] sm:min-w-[38px]"
                     >
                       <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                     </button>
@@ -216,7 +280,7 @@ export function ProjectsSection() {
                       type="button"
                       onClick={handleNext}
                       aria-label="Next project"
-                      className="inline-flex h-9 items-center gap-2 rounded-lg bg-[var(--accent)] px-4 font-mono text-xs font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)]"
+                      className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[var(--accent)] px-4 font-mono text-xs font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)] sm:min-h-[38px]"
                     >
                       <span>Next Project</span>
                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -232,7 +296,12 @@ export function ProjectsSection() {
               role="region"
               aria-roledescription="carousel"
               aria-label="Selected projects showcase"
-              className="overflow-hidden py-8"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onTouchCancel={handleTouchCancel}
+              style={{ touchAction: 'pan-y' }}
+              className="touch-pan-y overflow-hidden py-6 sm:py-8"
             >
               <div
                 onTransitionEnd={handleTrackTransitionEnd}

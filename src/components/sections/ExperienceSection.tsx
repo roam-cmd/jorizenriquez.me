@@ -40,7 +40,7 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
     <div
       className={cn(
         'relative z-10 w-full',
-        !embedded && 'mx-auto max-w-6xl px-4 sm:px-6'
+        !embedded && 'mx-auto max-w-6xl px-5 sm:px-8'
       )}
     >
       <div
@@ -88,7 +88,7 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
                         onClick={() => setActiveFilter(filter)}
                         aria-pressed={isActive}
                         className={cn(
-                          'rounded-md px-3 py-1.5 font-mono text-xs transition-colors',
+                          'inline-flex min-h-[40px] items-center rounded-md px-3 py-1.5 font-mono text-xs transition-colors sm:min-h-[34px]',
                           isActive
                             ? 'bg-[var(--bg-elevated)] text-[var(--fg-primary)]'
                             : 'text-[var(--fg-muted)] hover:text-[var(--fg-primary)]'
@@ -162,14 +162,14 @@ export function ExperienceSection({ embedded = false }: ExperienceSectionProps) 
     <section
       id="experience"
       aria-labelledby="experience-heading"
-      className="border-t border-[var(--line-subtle)]"
+      className="overflow-x-clip border-t border-[var(--line-subtle)]"
     >
       <RevealSection
         label="ExperienceSection"
-        toggleOffsetClassName="top-6 right-4 sm:right-6"
+        toggleOffsetClassName="top-6 right-5 sm:right-8"
       >
         <TopoBackground
-          className="min-h-0 bg-transparent py-20 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] sm:py-24"
+          className="min-h-0 bg-transparent py-16 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] md:py-24"
           interval={0.14}
           speed={0.45}
           seed={33}

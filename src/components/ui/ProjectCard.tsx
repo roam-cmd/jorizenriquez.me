@@ -90,11 +90,11 @@ export const ProjectCard = memo(function ProjectCard({
         </ul>
 
         {/* Actions */}
-        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[var(--line-subtle)] pt-4">
+        <div className="mt-6 flex flex-wrap items-center gap-2.5 border-t border-[var(--line-subtle)] pt-4 sm:gap-3">
           <button
             type="button"
             onClick={() => onInspect(project)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3.5 py-2 text-xs font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)]"
+            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)] sm:min-h-[38px] sm:px-3.5"
           >
             <Layers className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Details</span>
@@ -105,7 +105,7 @@ export const ProjectCard = memo(function ProjectCard({
               href={project.repoUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--line-border)] px-3 py-2 text-xs font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-[var(--line-border)] px-3.5 py-2 text-xs font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] sm:min-h-[38px] sm:px-3"
             >
               <FolderGit2 className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Repository</span>
@@ -117,7 +117,7 @@ export const ProjectCard = memo(function ProjectCard({
               href={project.demoUrl}
               target={isExternalDemo ? '_blank' : undefined}
               rel={isExternalDemo ? 'noreferrer' : undefined}
-              className="inline-flex items-center gap-1 rounded-lg border border-[var(--line-border)] px-3 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)]"
+              className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-[var(--line-border)] px-3.5 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)] sm:min-h-[38px] sm:px-3"
             >
               <span>{isExternalDemo ? 'Live Site' : 'Preview'}</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />

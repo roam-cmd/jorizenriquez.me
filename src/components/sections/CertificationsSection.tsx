@@ -67,7 +67,12 @@ export function CertificationsSection({
       builtPages.push(
         <div
           key={`group-${group.id}`}
-          className="relative flex size-full flex-col justify-between bg-[var(--bg-elevated)]/65 px-[8cqw] py-[8cqw] text-[var(--fg-primary)]"
+          className={cn(
+            'relative flex size-full flex-col justify-between px-[8cqw] py-[8cqw] text-[var(--fg-primary)]',
+            groupIdx === 0
+              ? 'bg-gradient-to-br from-[var(--bg-elevated)] via-[var(--bg-elevated)]/85 to-[var(--bg-surface)]'
+              : 'bg-[var(--bg-surface)]'
+          )}
         >
           <div className="flex items-center justify-between gap-2">
             <span className="font-mono text-[2.8cqw] tracking-[0.2em] text-[var(--accent)] uppercase">
@@ -236,7 +241,7 @@ export function CertificationsSection({
     <div
       className={cn(
         'relative z-10 w-full',
-        !embedded && 'mx-auto max-w-6xl px-4 sm:px-6'
+        !embedded && 'mx-auto max-w-6xl px-5 sm:px-8'
       )}
     >
       <div id={embedded ? undefined : 'certifications-heading'}>
@@ -272,7 +277,7 @@ export function CertificationsSection({
                   pageFlipRef.current?.flipToPage(groupStartPages[idx])
                 }}
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs transition-colors',
+                  'inline-flex min-h-[40px] items-center gap-2 rounded-full border px-3.5 py-1.5 font-mono text-xs transition-colors sm:min-h-[34px] sm:px-3',
                   isActive
                     ? 'border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]'
                     : 'border-[var(--line-border)] bg-[var(--bg-surface)]/85 text-[var(--fg-muted)] hover:border-[var(--accent)] hover:text-[var(--fg-primary)]'
@@ -309,14 +314,14 @@ export function CertificationsSection({
     <section
       id="certifications"
       aria-labelledby="certifications-heading"
-      className="border-t border-[var(--line-subtle)]"
+      className="overflow-x-clip border-t border-[var(--line-subtle)]"
     >
       <RevealSection
         label="CertificationsSection"
-        toggleOffsetClassName="top-6 right-4 sm:right-6"
+        toggleOffsetClassName="top-6 right-5 sm:right-8"
       >
         <TopoBackground
-          className="min-h-0 bg-transparent py-20 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] sm:py-24"
+          className="min-h-0 bg-transparent py-16 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] md:py-24"
           interval={0.14}
           speed={0.45}
           seed={42}

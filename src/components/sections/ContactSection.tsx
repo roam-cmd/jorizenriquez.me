@@ -36,19 +36,19 @@ export function ContactSection() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="border-t border-[var(--line-subtle)]"
+      className="overflow-x-clip border-t border-[var(--line-subtle)]"
     >
       <RevealSection
         label="ContactSection"
-        toggleOffsetClassName="top-6 right-4 sm:right-6"
+        toggleOffsetClassName="top-6 right-5 sm:right-8"
       >
         <TopoBackground
-          className="min-h-[460px] bg-transparent py-20 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] sm:py-24"
+          className="min-h-[460px] bg-transparent py-16 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] md:py-24"
           interval={0.14}
           speed={0.45}
           labels={false}
         >
-          <div className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6">
+          <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
             <div id="contact-heading">
               <CodeRevealItem
                 code={sectionHeaderCode(
@@ -93,7 +93,7 @@ export function ContactSection() {
                       onClick={(e) =>
                         handleEmailLinkClick(e, siteProfile.email)
                       }
-                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)]"
+                      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-[var(--accent-fg)] transition-colors hover:bg-[var(--accent-hover)]"
                     >
                       <Mail className="h-4 w-4" aria-hidden="true" />
                       <span>Email Me</span>
@@ -105,7 +105,7 @@ export function ContactSection() {
                       href={siteProfile.cvUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-base)]/80 px-4 py-2.5 text-xs font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-base)]/80 px-4 py-2.5 text-xs font-medium text-[var(--fg-primary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
                     >
                       <FileText
                         className="h-3.5 w-3.5 text-[var(--accent)]"
@@ -125,7 +125,7 @@ export function ContactSection() {
                         href={social.href}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-base)]/80 px-3.5 py-2.5 text-xs font-medium text-[var(--fg-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)]"
+                        className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--line-border)] bg-[var(--bg-base)]/80 px-3.5 py-2.5 text-xs font-medium text-[var(--fg-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)]"
                       >
                         <SocialIcon
                           platform={social.platform}
@@ -175,7 +175,7 @@ export function ContactSection() {
                               type="button"
                               onClick={() => handleCopyEmail(address)}
                               aria-label={`Copy ${address}`}
-                              className="inline-flex shrink-0 items-center gap-1 rounded border border-[var(--line-border)] bg-[var(--bg-elevated)] px-2.5 py-1 font-mono text-[11px] text-[var(--fg-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)]"
+                              className="inline-flex min-h-[38px] shrink-0 items-center gap-1 rounded border border-[var(--line-border)] bg-[var(--bg-elevated)] px-3 py-1.5 font-mono text-[11px] text-[var(--fg-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--fg-primary)]"
                             >
                               {isCopied ? (
                                 <>

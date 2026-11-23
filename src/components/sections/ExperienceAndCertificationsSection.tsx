@@ -12,20 +12,20 @@ export function ExperienceAndCertificationsSection() {
   return (
     <section
       aria-label="Experience and Certifications"
-      className="border-t border-[var(--line-subtle)]"
+      className="overflow-x-clip border-t border-[var(--line-subtle)]"
     >
       <RevealSection
         label="BackgroundAndCredentials"
-        toggleOffsetClassName="top-6 right-4 sm:right-6"
+        toggleOffsetClassName="top-6 right-5 sm:right-8"
       >
         <TopoBackground
-          className="min-h-0 bg-transparent py-20 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] sm:py-24"
+          className="min-h-0 bg-transparent py-16 text-[var(--accent-soft)] dark:bg-transparent dark:text-[var(--accent-soft)] md:py-24"
           interval={0.14}
           speed={0.45}
           seed={33}
           labels={false}
         >
-          <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6">
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8">
             <div className="grid gap-14 lg:grid-cols-12 lg:items-start lg:gap-10 xl:gap-12">
               <div id="experience" className="scroll-mt-24 lg:col-span-5">
                 <ExperienceSection embedded />

@@ -17,21 +17,21 @@ export function AboutSection() {
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="border-t border-[var(--line-subtle)]"
+      className="overflow-x-clip border-t border-[var(--line-subtle)]"
     >
       <RevealSection
         label="AboutSection"
-        toggleOffsetClassName="top-6 right-4 sm:right-6"
+        toggleOffsetClassName="top-6 right-5 sm:right-8"
       >
         <HalftoneBackground
-          className="min-h-0 bg-transparent py-20 dark:bg-transparent sm:py-24"
+          className="min-h-0 bg-transparent py-16 dark:bg-transparent md:py-24"
           inkClassName="text-[var(--accent-soft)]"
           canvasClassName="opacity-45"
           cell={13}
           angle={45}
           loupe
         >
-          <div className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6">
+          <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
             <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
               <div className="space-y-6 lg:col-span-7">
                 <div id="about-heading">
