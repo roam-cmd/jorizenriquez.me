@@ -135,6 +135,13 @@ export const siteProfile: SiteProfile = {
   ],
 }
 
+export const githubProfile = {
+  username: 'roam-cmd',
+  profileUrl: 'https://github.com/roam-cmd',
+  contributionsApi:
+    'https://github-contributions-api.jogruber.de/v4/roam-cmd?y=last',
+}
+
 export const navLinks: NavLinkItem[] = [
   { id: 'about', label: 'About', href: '#about' },
   { id: 'skills', label: 'Skills', href: '#skills' },
@@ -145,7 +152,7 @@ export const navLinks: NavLinkItem[] = [
 
 export const aboutData: AboutData = {
   paragraphs: [
-    'I’m Joriz Enriquez, a software developer based in City of San Fernando, Pampanga. My primary stack centers on FastAPI, React, and PostgreSQL, pairing strongly typed Python backends and relational data models with responsive TypeScript interfaces.',
+    'I’m Joriz Aaron Enriquez, a software developer based in City of San Fernando, Pampanga. My primary stack centers on FastAPI, React, and PostgreSQL, pairing strongly typed Python backends and relational data models with responsive TypeScript interfaces.',
     'Across full-stack web platforms, data analytics, desktop utilities, and Android apps, I enjoy turning complex workflows into clean, dependable tools that are straightforward to deploy and maintain.',
   ],
   focusAreas: [

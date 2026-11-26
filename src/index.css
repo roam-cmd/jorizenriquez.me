@@ -81,6 +81,12 @@
     --cursor-tint: rgba(165, 201, 202, 0.14);
     --cursor-halo: rgba(11, 14, 14, 0.72);
 
+    --clover-a-light: #E7F6F2;
+    --clover-a-dark: #A5C9CA;
+    --clover-b-light: #4B7782;
+    --clover-b-dark: #233B42;
+    --clover-stroke: #0B0E0E;
+
     --preview-accent: #A5C9CA;
     --preview-accent-rgb: 165, 201, 202;
     --preview-bg: #090D10;
@@ -172,6 +178,12 @@
     --cursor-tint: rgba(223, 208, 184, 0.14);
     --cursor-halo: rgba(34, 40, 49, 0.75);
 
+    --clover-a-light: #F5EFE6;
+    --clover-a-dark: #DFD0B8;
+    --clover-b-light: #8A7F6E;
+    --clover-b-dark: #393E46;
+    --clover-stroke: #222831;
+
     --preview-accent: #DFD0B8;
     --preview-accent-rgb: 223, 208, 184;
     --preview-bg: #181D24;
@@ -252,6 +264,12 @@
     --cursor-dot: #0F766E;
     --cursor-tint: rgba(45, 212, 191, 0.22);
     --cursor-halo: rgba(19, 78, 74, 0.85);
+
+    --clover-a-light: #FFF8E6;
+    --clover-a-dark: #FFF0C4;
+    --clover-b-light: #B3180D;
+    --clover-b-dark: #660B05;
+    --clover-stroke: #3E0703;
 
     --preview-accent: #FFF0C4;
     --preview-accent-rgb: 255, 240, 196;
@@ -334,6 +352,11 @@
     --syntax-punctuation: #8C1007;
     --syntax-plain: #3E0703;
     --syntax-glow: rgba(255, 240, 196, 0.90);
+    --clover-a-light: #A6140A;
+    --clover-a-dark: #660B05;
+    --clover-b-light: #FFF8E6;
+    --clover-b-dark: #E8CFA0;
+    --clover-stroke: #3E0703;
     background-color: #FFF0C4;
     color: #3E0703;
     border-color: rgba(102, 11, 5, 0.26);

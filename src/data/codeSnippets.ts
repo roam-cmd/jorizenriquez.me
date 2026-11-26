@@ -54,6 +54,7 @@ export function buildSkillCategoryCode(category: SkillCategory): string {
 export const projectsSnippets = {
   controls: `<CarouselNav onPrev={prev} onNext={next} />`,
   progressDots: (total: number) => `<Dots count={${total}} />`,
+  githubActivity: `<GitHubContributions\n  username="roam-cmd"\n  range="last-year"\n/>`,
 }
 
 export function buildProjectCardCode(project: ProjectItem): string {

@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
+import {
+  type CloverFaviconPalette,
+  buildCloverFaviconDataUrl,
+} from '@/lib/cloverLogo'
 
 export type ThemeId = 'midnight' | 'slate-sand' | 'sage-stone'
 
@@ -10,6 +14,7 @@ export interface ThemeOption {
   swatchAccent: string
   isDark: boolean
   themeColor: string
+  faviconPalette: CloverFaviconPalette
 }
 
 export const THEME_OPTIONS: ThemeOption[] = [
@@ -21,6 +26,14 @@ export const THEME_OPTIONS: ThemeOption[] = [
     swatchAccent: '#A5C9CA',
     isDark: true,
     themeColor: '#0B0E0E',
+    faviconPalette: {
+      leafALight: '#E7F6F2',
+      leafADark: '#A5C9CA',
+      leafBLight: '#4B7782',
+      leafBDark: '#233B42',
+      stroke: '#0B0E0E',
+      vein: '#E7F6F2',
+    },
   },
   {
     id: 'slate-sand',
@@ -30,6 +43,14 @@ export const THEME_OPTIONS: ThemeOption[] = [
     swatchAccent: '#DFD0B8',
     isDark: true,
     themeColor: '#222831',
+    faviconPalette: {
+      leafALight: '#F5EFE6',
+      leafADark: '#DFD0B8',
+      leafBLight: '#8A7F6E',
+      leafBDark: '#393E46',
+      stroke: '#222831',
+      vein: '#F5EFE6',
+    },
   },
   {
     id: 'sage-stone',
@@ -39,6 +60,14 @@ export const THEME_OPTIONS: ThemeOption[] = [
     swatchAccent: '#FFF0C4',
     isDark: true,
     themeColor: '#3E0703',
+    faviconPalette: {
+      leafALight: '#FFF8E6',
+      leafADark: '#FFF0C4',
+      leafBLight: '#B3180D',
+      leafBDark: '#660B05',
+      stroke: '#3E0703',
+      vein: '#FFF8E6',
+    },
   },
 ]
 
@@ -70,6 +99,18 @@ function readInitialTheme(): ThemeId {
   return 'midnight'
 }
 
+function syncFaviconToTheme(themeId: ThemeId) {
+  if (typeof document === 'undefined') {
+    return
+  }
+  const option =
+    THEME_OPTIONS.find((item) => item.id === themeId) ?? THEME_OPTIONS[0]
+  const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+  if (icon) {
+    icon.href = buildCloverFaviconDataUrl(option.faviconPalette)
+  }
+}
+
 function applyThemeToDocument(themeId: ThemeId) {
   if (typeof document === 'undefined') {
     return
@@ -84,6 +125,7 @@ function applyThemeToDocument(themeId: ThemeId) {
   if (meta) {
     meta.setAttribute('content', option.themeColor)
   }
+  syncFaviconToTheme(option.id)
 
   try {
     window.localStorage.setItem(STORAGE_KEY, option.id)
@@ -98,6 +140,10 @@ function applyThemeToDocument(themeId: ThemeId) {
  */
 export function useTheme() {
   const [theme, setThemeState] = useState<ThemeId>(readInitialTheme)
+
+  useEffect(() => {
+    syncFaviconToTheme(theme)
+  }, [theme])
 
   useEffect(() => {
     const observer = new MutationObserver(() => {

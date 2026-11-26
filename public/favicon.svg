@@ -1,89 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <radialGradient id="clover-top" cx="35%" cy="30%" r="75%">
-      <stop offset="0%" stop-color="#D8C7A8" />
-      <stop offset="55%" stop-color="#A69274" />
-      <stop offset="100%" stop-color="#6B5B44" />
+    <radialGradient id="leaf-a" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#E7F6F2" />
+      <stop offset="100%" stop-color="#A5C9CA" />
     </radialGradient>
-    <radialGradient id="clover-side" cx="40%" cy="35%" r="75%">
-      <stop offset="0%" stop-color="#CBB896" />
-      <stop offset="60%" stop-color="#968164" />
-      <stop offset="100%" stop-color="#5E4F3A" />
+    <radialGradient id="leaf-b" cx="40%" cy="35%" r="75%">
+      <stop offset="0%" stop-color="#4B7782" />
+      <stop offset="100%" stop-color="#233B42" />
     </radialGradient>
-    <linearGradient id="clover-stem" x1="32" y1="30" x2="48" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#9B876A" />
-      <stop offset="100%" stop-color="#5B4C38" />
-    </linearGradient>
-    <linearGradient id="arcane-crest" x1="32" y1="21" x2="32" y2="35" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#F5E9D3" />
-      <stop offset="100%" stop-color="#C5B08E" />
+    <linearGradient id="crest" x1="32" y1="25.5" x2="32" y2="38.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E7F6F2" />
+      <stop offset="100%" stop-color="#A5C9CA" />
     </linearGradient>
   </defs>
 
-  <!-- Curved fantasy stem -->
+  <!-- Top & bottom leaves (Pair A) -->
   <path
-    d="M32 30 C32 42 36 50 47 58"
-    stroke="#3E3426"
-    stroke-width="6.2"
-    stroke-linecap="round"
+    d="M32 32 C25 26 19 18 23 12 C26 8 30 10 32 14 C34 10 38 8 41 12 C45 18 39 26 32 32 Z"
+    fill="url(#leaf-a)"
+    stroke="#0B0E0E"
+    stroke-width="2"
+    stroke-linejoin="round"
   />
   <path
-    d="M32 30 C32 42 36 50 47 58"
-    stroke="url(#clover-stem)"
-    stroke-width="3.6"
-    stroke-linecap="round"
-  />
-
-  <!-- Top clover leaf -->
-  <path
-    d="M32 28 C25 22 19 14 23 8 C26 4 30 6 32 10 C34 6 38 4 41 8 C45 14 39 22 32 28 Z"
-    fill="url(#clover-top)"
-    stroke="#3E3426"
+    d="M32 32 C25 38 19 46 23 52 C26 56 30 54 32 50 C34 54 38 56 41 52 C45 46 39 38 32 32 Z"
+    fill="url(#leaf-a)"
+    stroke="#0B0E0E"
     stroke-width="2"
     stroke-linejoin="round"
   />
 
-  <!-- Bottom clover leaf -->
+  <!-- Left & right leaves (Pair B) -->
   <path
-    d="M32 28 C25 34 19 42 23 48 C26 52 30 50 32 46 C34 50 38 52 41 48 C45 42 39 34 32 28 Z"
-    fill="url(#clover-side)"
-    stroke="#3E3426"
+    d="M32 32 C26 25 18 19 12 23 C8 26 10 30 14 32 C10 34 8 38 12 41 C18 45 26 39 32 32 Z"
+    fill="url(#leaf-b)"
+    stroke="#0B0E0E"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M32 32 C38 25 46 19 52 23 C56 26 54 30 50 32 C54 34 56 38 52 41 C46 45 38 39 32 32 Z"
+    fill="url(#leaf-b)"
+    stroke="#0B0E0E"
     stroke-width="2"
     stroke-linejoin="round"
   />
 
-  <!-- Left clover leaf -->
+  <!-- Leaf veins -->
   <path
-    d="M32 28 C26 21 18 15 12 19 C8 22 10 26 14 28 C10 30 8 34 12 37 C18 41 26 35 32 28 Z"
-    fill="url(#clover-side)"
-    stroke="#3E3426"
-    stroke-width="2"
-    stroke-linejoin="round"
-  />
-
-  <!-- Right clover leaf -->
-  <path
-    d="M32 28 C38 21 46 15 52 19 C56 22 54 26 50 28 C54 30 56 34 52 37 C46 41 38 35 32 28 Z"
-    fill="url(#clover-top)"
-    stroke="#3E3426"
-    stroke-width="2"
-    stroke-linejoin="round"
-  />
-
-  <!-- Subtle antique-parchment leaf veins -->
-  <path
-    d="M32 13 L32 24 M32 32 L32 43 M17 28 L28 28 M36 28 L47 28"
-    stroke="#EADCC2"
+    d="M32 17 L32 28 M32 36 L32 47 M17 32 L28 32 M36 32 L47 32"
+    stroke="#E7F6F2"
     stroke-opacity="0.45"
     stroke-width="1.3"
     stroke-linecap="round"
   />
 
-  <!-- Fantasy 4-point star center crest -->
+  <!-- 4-point center star crest -->
   <path
-    d="M32 21.5 L34.2 25.8 L38.5 28 L34.2 30.2 L32 34.5 L29.8 30.2 L25.5 28 L29.8 25.8 Z"
-    fill="url(#arcane-crest)"
-    stroke="#3E3426"
+    d="M32 25.5 L34.2 29.8 L38.5 32 L34.2 34.2 L32 38.5 L29.8 34.2 L25.5 32 L29.8 29.8 Z"
+    fill="url(#crest)"
+    stroke="#0B0E0E"
     stroke-width="1.4"
     stroke-linejoin="round"
   />

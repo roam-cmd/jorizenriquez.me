@@ -3,6 +3,7 @@ import {
   CodeRevealItem,
   RevealSection,
 } from '@/components/motion/CodeToUIReveal'
+import { CloverLogo } from '@/components/ui/CloverLogo'
 import { SocialIcon } from '@/components/ui/SocialIcon'
 import { footerSnippets } from '@/data/codeSnippets'
 import { navLinks, siteProfile } from '@/data/portfolio'
@@ -20,8 +21,9 @@ export function Footer() {
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between">
           <CodeRevealItem code={footerSnippets.brand}>
             <div>
-              <p className="font-display text-sm font-semibold text-[var(--fg-primary)] transition-colors duration-300 ease-out hover:text-[var(--name-hover)]">
-                {siteProfile.displayName}{' '}
+              <p className="flex items-center gap-2 font-display text-sm font-semibold text-[var(--fg-primary)] transition-colors duration-300 ease-out hover:text-[var(--name-hover)]">
+                <CloverLogo className="h-6 w-6 shrink-0" />
+                <span>{siteProfile.displayName}</span>
                 <span className="font-mono text-xs font-normal text-[var(--accent)]">
                   (@{siteProfile.brandHandle})
                 </span>

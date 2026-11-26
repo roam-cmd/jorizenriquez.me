@@ -44,6 +44,7 @@ interface ItemMeta {
   startTime: number
   durationMs: number
   waveId: number | null
+  deferToViewport: boolean
 }
 
 interface RevealWave {
@@ -170,7 +171,7 @@ export function RevealSection({
   }, [setCompilingActive])
 
   const registerItem = useCallback(
-    (id: string, element: HTMLElement) => {
+    (id: string, element: HTMLElement, deferToViewport = false) => {
       itemsMetaRef.current.set(id, {
         element,
         phase: 'idle',
@@ -178,6 +179,7 @@ export function RevealSection({
         startTime: 0,
         durationMs: typingMs,
         waveId: null,
+        deferToViewport,
       })
       elementToIdRef.current.set(element, id)
       itemObserverRef.current?.observe(element)
@@ -380,13 +382,13 @@ export function RevealSection({
 
         if (newlyVisibleIds.length > 0) {
           if (revealAllOnEnter) {
-            const allIdleIds: string[] = []
+            const idsToEnqueue = new Set<string>(newlyVisibleIds)
             for (const [id, meta] of itemsMetaRef.current.entries()) {
-              if (meta.phase === 'idle') {
-                allIdleIds.push(id)
+              if (meta.phase === 'idle' && !meta.deferToViewport) {
+                idsToEnqueue.add(id)
               }
             }
-            enqueueWave(allIdleIds, scrollDirectionRef.current)
+            enqueueWave(Array.from(idsToEnqueue), scrollDirectionRef.current)
           } else {
             enqueueWave(newlyVisibleIds, scrollDirectionRef.current)
           }
@@ -562,6 +564,7 @@ export interface CodeRevealItemProps {
   children: ReactNode
   inline?: boolean
   align?: 'start' | 'center'
+  deferToViewport?: boolean
   className?: string
 }
 
@@ -575,6 +578,7 @@ export function CodeRevealItem({
   children,
   inline = false,
   align = inline ? 'center' : 'start',
+  deferToViewport = false,
   className,
 }: CodeRevealItemProps) {
   const id = useId()
@@ -592,8 +596,8 @@ export function CodeRevealItem({
     if (!node) {
       return
     }
-    return registerItem(id, node)
-  }, [id, registerItem])
+    return registerItem(id, node, deferToViewport)
+  }, [deferToViewport, id, registerItem])
 
   const subscribe = useCallback(
     (listener: () => void) => subscribeItem(id, listener),

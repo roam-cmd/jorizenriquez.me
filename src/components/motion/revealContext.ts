@@ -17,7 +17,11 @@ export interface RevealSectionContextValue {
   prefersReducedMotion: boolean
   getItemState: (id: string) => ItemRevealState
   subscribeItem: (id: string, listener: () => void) => () => void
-  registerItem: (id: string, element: HTMLElement) => () => void
+  registerItem: (
+    id: string,
+    element: HTMLElement,
+    deferToViewport?: boolean
+  ) => () => void
 }
 
 const DEFAULT_ITEM_STATE: ItemRevealState = {

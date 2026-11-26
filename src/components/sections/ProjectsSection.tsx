@@ -13,6 +13,7 @@ import {
   CodeRevealItem,
   RevealSection,
 } from '@/components/motion/CodeToUIReveal'
+import { GitHubContributions } from '@/components/ui/GitHubContributions'
 import { ProjectCard } from '@/components/ui/ProjectCard'
 import { ProjectModal } from '@/components/ui/ProjectModal'
 import { SectionHeader } from '@/components/ui/SectionHeader'
@@ -389,6 +390,13 @@ export function ProjectsSection() {
                 </div>
               </CodeRevealItem>
             </div>
+
+            <CodeRevealItem
+              code={projectsSnippets.githubActivity}
+              deferToViewport
+            >
+              <GitHubContributions />
+            </CodeRevealItem>
           </div>
         </TopoBackground>
       </RevealSection>

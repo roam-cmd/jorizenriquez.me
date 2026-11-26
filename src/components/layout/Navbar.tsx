@@ -1,9 +1,10 @@
-import { Menu, Terminal, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
   CodeRevealItem,
   RevealSection,
 } from '@/components/motion/CodeToUIReveal'
+import { CloverLogo } from '@/components/ui/CloverLogo'
 import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher'
 import { navSnippets } from '@/data/codeSnippets'
 import { navLinks, siteProfile } from '@/data/portfolio'
@@ -78,11 +79,9 @@ export function Navbar() {
           <CodeRevealItem code={navSnippets.brand} inline>
             <a
               href="#top"
-              className="inline-flex items-center gap-2 font-display text-base font-semibold tracking-tight text-[var(--fg-primary)] transition-colors hover:text-[var(--accent)]"
+              className="inline-flex items-center gap-2.5 font-display text-base font-semibold tracking-tight text-[var(--fg-primary)] transition-colors hover:text-[var(--accent)]"
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--line-border)] bg-[var(--bg-elevated)] text-[var(--accent)]">
-                <Terminal className="h-3.5 w-3.5" aria-hidden="true" />
-              </span>
+              <CloverLogo className="h-8 w-8 shrink-0" />
               <span>{siteProfile.brandHandle}</span>
             </a>
           </CodeRevealItem>

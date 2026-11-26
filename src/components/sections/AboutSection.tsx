@@ -4,6 +4,7 @@ import {
   CodeRevealItem,
   RevealSection,
 } from '@/components/motion/CodeToUIReveal'
+import { CloverLogo } from '@/components/ui/CloverLogo'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { aboutSnippets, sectionHeaderCode } from '@/data/codeSnippets'
 import { aboutData } from '@/data/portfolio'
@@ -97,9 +98,12 @@ export function AboutSection() {
                         className="aspect-[4/4] max-h-[290px] w-full object-cover object-top"
                       />
                     </div>
-                    <p className="font-mono text-xs tracking-wider text-[var(--accent)] uppercase">
-                      Profile Snapshot
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-mono text-xs tracking-wider text-[var(--accent)] uppercase">
+                        Profile Snapshot
+                      </p>
+                      <CloverLogo className="h-8 w-8 shrink-0 drop-shadow-[0_0_8px_rgba(var(--accent-rgb),0.35)]" />
+                    </div>
                     <dl className="mt-4 divide-y divide-[var(--line-subtle)]">
                       {aboutData.snapshot.map((item) => (
                         <div
